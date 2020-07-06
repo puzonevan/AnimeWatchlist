@@ -6,10 +6,10 @@
 
 class Season(): 
 
-    def __init__(self, season, year): 
+    def __init__(self, season, year, animeCards): 
         self.season = season
         self.year = year 
-        self.anime = []
+        self.anime = animeCards
 
     def addtocurrentseason(self, animeCard): 
         self.anime.append(animeCard)

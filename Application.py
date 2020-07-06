@@ -1,10 +1,10 @@
 """ Main Application """ 
 """
-    Desktop application that is a personal tracker and watchlist of anime
+    Desktop application to personally track and watchlist of anime
 """
 
 """ Imports """
-import AnimeCard, Finished, Season, Watchlist
+import AnimeCard, Season, Finished, Watchlist
 import json
 import tkinter as tk 
 from tkinter import ttk 
@@ -48,6 +48,35 @@ def loadDatabase():
         output[table] = cursor.fetchall()
     return output
 
+""" formatData Method """
+def formatdata(data): 
+    
+    for category in data.keys(): 
+        categoryanime = []
+        for anime in data.get(category): 
+            card = AnimeCard.AnimeCard(anime, category)
+            categoryanime.append(card)
+        data[category] = categoryanime
+        
+    return data
+        
+
+""" createCategories Method """
+def createCategories(data): 
+    output = [] 
+    for category in data.keys(): 
+        if category == 'CurrentSeason': 
+            currentseason = Season.Season('Spring', '2020', data.get(category))
+            output.append(currentseason)
+        elif category == 'Finished': 
+            finished = Finished.Finished(data.get(category))
+            output.append(finished)
+        else: 
+            watchlist = Watchlist.Watchlist('Watchlist', data.get(category))
+            output.append(watchlist)
+
+    return output
+
 
 """ Table Methods """
 def createNewWatchlist(name): 
@@ -69,36 +98,26 @@ def removeFromFinished():
     pass
 
 
-""" Button Methods """ 
-def displayCurrentSeason(): 
-    pass
-
-def displayWatchlist(): 
-    pass
-
-def displayFinished():
-    pass
-
 """ Frame Methods """ 
 def raiseframe(frame): 
     frame.tkraise()
 
 """ AnimeCard Methods """ 
-def createAnimeCard(parentframe, row, col): 
+def createAnimeCard(animeCard, parentframe, row, col): 
 
     # AnimeCard Frame
-    animeCard = tk.Frame(
+    animeCardFrame = tk.Frame(
         master=parentframe, 
         width=140, height=170, 
         bg='white'
     )
-    animeCard.grid(row=row, column=col, padx=5, pady=5)
+    animeCardFrame.grid(row=row, column=col, padx=5, pady=5)
 
     # Anime Information 
-    picture = tk.Label(animeCard, text='Insert Picture Here')
-    name = tk.Label(animeCard, text='Kaguya Sama: Love is War')
-    season = tk.Label(animeCard, text='Spring 2020')
-    genre = tk.Label(animeCard, text='Romantic Comedy')
+    picture = tk.Label(animeCardFrame, text='Insert Picture Here')
+    name = tk.Label(animeCardFrame, text=animeCard.name)
+    season = tk.Label(animeCardFrame, text=animeCard.season)
+    genre = tk.Label(animeCardFrame, text=animeCard.genre)
 
     # Grid Information 
     picture.grid(row=0, column=0, rowspan=3, columnspan=2)
@@ -106,9 +125,14 @@ def createAnimeCard(parentframe, row, col):
     season.grid(row=4, column=0)
     genre.grid(row=4, column=1)
 
-
 def runApplication(data): 
-    
+
+    # Row and Column
+    row = 0
+    column = 0
+    # Create CurrentSeason, Finished, and Watchlist Objects 
+    categories = createCategories(data)
+            
     # GUI 
     root = tk.Tk()
     root.title('Anime Watchlist')
@@ -120,44 +144,66 @@ def runApplication(data):
     # Frame 1: Current Season 
     currentseasonframe = tk.Frame(master=root, bg='red')
     currentseasonframe.grid(row=0, column=1, sticky="nswe")
-    createAnimeCard(currentseasonframe, 0, 0)
-    createAnimeCard(currentseasonframe, 0, 1)
-    createAnimeCard(currentseasonframe, 0, 2)
-    createAnimeCard(currentseasonframe, 0, 3)
+    for animeCard in categories[0].anime: 
+        createAnimeCard(animeCard, currentseasonframe, row, column)
+        column += 1
+        if column == 3:
+            column = 0
+            row += 1
+    row = 0 
+    column = 0
 
-    # Frame 2: Watchlist 
-    watchlistframe = tk.Frame(master=root, bg='blue')
-    watchlistframe.grid(row=0, column=1, sticky="nswe")
-
-    # Frame 3: Finished
+    # Frame 2: Finished
     finishedframe = tk.Frame(master=root, bg='yellow')
     finishedframe.grid(row=0, column=1, sticky="nswe")
+    for animeCard in categories[1].anime: 
+        createAnimeCard(animeCard, finishedframe, row, column)
+        column += 1
+        if column == 3:
+            column = 0
+            row += 1
+    row = 0 
+    column = 0
 
-    # Left Sidebar 
+    # Frame 3: Watchlist 
+    watchlistframe = tk.Frame(master=root, bg='blue')
+    watchlistframe.grid(row=0, column=1, sticky="nswe")
+    for animeCard in categories[2].anime: 
+        createAnimeCard(animeCard, watchlistframe, row, column)
+        column += 1
+        if column == 3:
+            column = 0
+            row += 1
+    row = 0 
+    column = 0
+
+
+    
+
+    """ Left SideBar Frame """
     leftsidebar = tk.Frame(master=root, bg='gray')
     leftsidebar.grid(row=0, column=0, sticky="nsw")
 
-    # Categories for Left Sidebar
+    """ Left Sidebar Buttons"""
+    # Add Watchlist Button
+    addWatchlist = tk.Button(leftsidebar, text='Add Watchlist')
+    addWatchlist.grid(row=0, column=0)
+
+    # Current Season Category 
     currentseason = tk.Button(leftsidebar, text='Current Season', command=lambda: raiseframe(currentseasonframe))
-    currentseason.grid(row=0, column=0)
-
+    currentseason.grid(row=1, column=0)
+    # Finished Category
+    finished = tk.Button(leftsidebar, text='Finished', command=lambda: raiseframe(finishedframe))
+    finished.grid(row=2, column=0)
+    # Each Watchlist Category
     watchlist1 = tk.Button(leftsidebar, text='Watchlist1', command=lambda: raiseframe(watchlistframe))
-    watchlist1.grid(row=1, column=0)
-
-    archived = tk.Button(leftsidebar, text='Finished', command=lambda: raiseframe(finishedframe))
-    archived.grid(row=2, column=0)
-
-
-    # Top of Main Contents: Searchbar and filter
-    # searchbar = tk.Entry(maincontents)
-    # searchbar.grid(row=0, column=0, columnspan=3)
-
-    # filterbutton = tk.Button(maincontents, text='icon here')
-    # filterbutton.grid(row=0, column=3)
+    watchlist1.grid(row=3, column=0)
     
+
+
     root.mainloop()
 
 def main(): 
-    data = loadDatabase()
+    data = formatdata(loadDatabase())
     runApplication(data)
 main()

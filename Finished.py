@@ -5,8 +5,8 @@
 
 class Finished(): 
     
-    def __init__(self): 
-        self.anime = [] 
+    def __init__(self, animeCards): 
+        self.anime = animeCards
 
     def addtofinished(self, animeCard): 
         self.anime.append(animeCard)
