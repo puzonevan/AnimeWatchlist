@@ -21,7 +21,7 @@ LOCALSERVER = mysql.connector.connect(
 cursor = LOCALSERVER.cursor()
 
 """ CONSTANTS """
-SEASON = 'SPRING'
+SEASON = 'SUMMER'
 YEAR = '2020'
 
 """ Create AnimeDatabase """
@@ -31,7 +31,7 @@ YEAR = '2020'
 """ Create Tables """
 # Table 1: Current Season
 def createTableCurrentSeason(): 
-    cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Picture VARCHAR(255))")
+    cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Source VARCHAR(255))")
 # Table 2: Default Watchlist
 def createTableWatchlist(name): 
     cursor.execute("CREATE TABLE {} (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), CurrentEpisode TINYINT, Picture VARCHAR(255))".format(name))
@@ -80,6 +80,7 @@ def loadAnimeData():
 """ createCategories Method """
 def createCategories(data): 
     output = [] 
+    pprint.pprint(data)
     for category in data.keys(): 
         if category == 'CurrentSeason': 
             currentseason = Season.Season(SEASON, YEAR, data.get(category))
@@ -90,9 +91,8 @@ def createCategories(data):
         else: 
             watchlist = Watchlist.Watchlist('Watchlist', data.get(category))
             output.append(watchlist)
-
+    
     return output
-
 
 def updateCurrentSeason(animeData): 
 
@@ -124,29 +124,49 @@ def updateCurrentSeason(animeData):
             genre = anime.get('tags')[0]
 
         season = anime.get('animeSeason').get('season') + ' ' + str(anime.get('animeSeason').get('year'))
-        sql = "INSERT INTO CurrentSeason (Name, Season, Status, Genre, Picture) VALUES (%s, %s, %s, %s, %s)"
+        sql = "INSERT INTO CurrentSeason (Name, Season, Status, Genre, Source) VALUES (%s, %s, %s, %s, %s)"
         vals = (
             title,
             season, 
             anime.get('status'), 
             genre,
-            anime.get('picture')
+            anime.get('sources')[0]
         )
         cursor.execute(sql, vals)
         LOCALSERVER.commit()
 
 
 def addToWatchlist(watchlist, animeCard): 
-    pass
+    sql = "INSERT INTO {} (Name, Season, Status, Genre, CurrentEpisode, Picture) VALUES (%s, %s, %s, %s, %s)".format(watchlist)
+    vals = (
+        animeCard.name, 
+        animeCard.season, 
+        animeCard.status, 
+        animeCard.genre, 
+        animeCard.currentep, 
+        animeCard.pictureurl
+    )
+    cursor.execute(sql, vals)
+    LOCALSERVER.commit()
 
-def removeFromWatchlist(): 
-    pass
+def removeFromWatchlist(watchlist, animename): 
+    cursor.execute("DELETE FROM {} WHERE Name={}".format(watchlist, animename))
+    LOCALSERVER.commit()
 
-def addToFinished(): 
-    pass
+def addToFinished(animeCard): 
+    sql = "INSERT INTO Finished (Name, Season, Genre, Picture) VALUES (%s, %s, %s, %s)"
+    vals = (
+        animeCard.name, 
+        animeCard.season,
+        animeCard.genre,
+        animeCard.pictureurl
+    )
+    cursor.execute(sql, vals)
+    LOCALSERVER.commit()
 
-def removeFromFinished(): 
-    pass
+def removeFromFinished(animename): 
+    cursor.execute("DELETE FROM Finished WHERE Name={}".format(animename))
+    LOCALSERVER.commit()
 
 
 """ AnimeCard Methods """ 
@@ -154,23 +174,21 @@ def createAnimeCard(animeCard, parentframe, row, col):
 
     # AnimeCard Frame
     animeCardFrame = tk.Frame(
-        master=parentframe, 
-        width=140, height=170, 
+        master=parentframe,  
+        padx=10, pady=10, 
         bg='#242629'
     )
-    animeCardFrame.grid(row=row, column=col, padx=5, pady=5, columnspan=1)
+    animeCardFrame.grid(row=row, column=col, padx=5, pady=5, sticky='nesw')
 
     # Anime Information 
-    picture = tk.Label(animeCardFrame, text='Insert Picture Here', fg='#fffffe', bg='#242629')
     name = tk.Message(animeCardFrame, text=animeCard.name, width=150, fg='#fffffe', bg='#242629')
     season = tk.Label(animeCardFrame, text=animeCard.season, fg='#94a1b2', bg='#242629')
     genre = tk.Label(animeCardFrame, text=animeCard.genre, fg='#94a1b2', bg='#242629')
 
     # Grid Information 
-    picture.grid(row=0, column=0, rowspan=3, columnspan=2)
-    name.grid(row=3, column=0, columnspan=2)
-    season.grid(row=4, column=0)
-    genre.grid(row=5, column=0)
+    name.pack(side=tk.TOP)
+    season.pack(side=tk.BOTTOM)
+    genre.pack(side=tk.BOTTOM)
 
 def runApplication(data, animeData): 
 
@@ -183,7 +201,7 @@ def runApplication(data, animeData):
     # GUI 
     root = tk.Tk()
     root.title('Anime Watchlist')
-    root.geometry("850x500")
+    root.geometry("930x520")
     tk.Grid.rowconfigure(root, 0, weight=1)
     tk.Grid.columnconfigure(root, 0, weight=0)
     tk.Grid.columnconfigure(root, 1, weight=1)
@@ -191,13 +209,13 @@ def runApplication(data, animeData):
     # Frame 1: Current Season 
     currentseasonframe = tk.Frame(master=root, bg='#16161a')
     currentseasonframe.grid(row=0, column=1, sticky="nswe")
-    for animeCard in categories[0].anime: 
+    start = 0
+    for animeCard in categories[0].anime[start:start+16]: 
         createAnimeCard(animeCard, currentseasonframe, row, column)
         column += 1
         if column == 4:
             column = 0
             row += 1
-        
     row = 0 
     column = 0
 
@@ -259,7 +277,7 @@ def main():
     animeData = loadAnimeData()
 
     """ Update Current Season """
-    updateCurrentSeason(animeData)
+    # updateCurrentSeason(animeData)
 
     """ Run GUI Application """
     runApplication(databaseData, animeData)
