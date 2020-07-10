@@ -7,9 +7,9 @@
 import AnimeCard, Season, Finished, Watchlist
 import json
 import tkinter as tk 
-from tkinter import ttk 
 import mysql.connector
 import pprint, time
+import AnimeWatchlistUI as mainpage
 
 """ Setup Database Connection """
 LOCALSERVER = mysql.connector.connect(
@@ -80,7 +80,6 @@ def loadAnimeData():
 """ createCategories Method """
 def createCategories(data): 
     output = [] 
-    pprint.pprint(data)
     for category in data.keys(): 
         if category == 'CurrentSeason': 
             currentseason = Season.Season(SEASON, YEAR, data.get(category))
@@ -150,7 +149,9 @@ def addToWatchlist(watchlist, animeCard):
     LOCALSERVER.commit()
 
 def removeFromWatchlist(watchlist, animename): 
-    cursor.execute("DELETE FROM {} WHERE Name={}".format(watchlist, animename))
+    sql = "DELETE FROM {} WHERE Name = %s".format(watchlist)
+    val = (animename, )
+    cursor.execute(sql, val)
     LOCALSERVER.commit()
 
 def addToFinished(animeCard): 
@@ -165,7 +166,9 @@ def addToFinished(animeCard):
     LOCALSERVER.commit()
 
 def removeFromFinished(animename): 
-    cursor.execute("DELETE FROM Finished WHERE Name={}".format(animename))
+    sql = "DELETE FROM Finished WHERE Name = %s"
+    val = (animename,)
+    cursor.execute(sql, val)
     LOCALSERVER.commit()
 
 
@@ -181,14 +184,23 @@ def createAnimeCard(animeCard, parentframe, row, col):
     animeCardFrame.grid(row=row, column=col, padx=5, pady=5, sticky='nesw')
 
     # Anime Information 
-    name = tk.Message(animeCardFrame, text=animeCard.name, width=150, fg='#fffffe', bg='#242629')
+    name = tk.Message(animeCardFrame, text=animeCard.name, width=200, fg='#fffffe', bg='#242629')
     season = tk.Label(animeCardFrame, text=animeCard.season, fg='#94a1b2', bg='#242629')
     genre = tk.Label(animeCardFrame, text=animeCard.genre, fg='#94a1b2', bg='#242629')
+    def removeClick(): 
+        if parentframe._name == '!frame':
+            removeFromWatchlist('CurrentSeason', animeCard.name)
+            animeCardFrame.destroy()
+        elif parentframe._name == '!frame2': 
+            removeFromFinished(animeCard.name)
+            animeCardFrame.destroy()
+    removeButton = tk.Button(animeCardFrame, text='remove', highlightbackground='#242629', command=removeClick)
 
     # Grid Information 
-    name.pack(side=tk.TOP)
-    season.pack(side=tk.BOTTOM)
-    genre.pack(side=tk.BOTTOM)
+    name.grid(row=0, column=0, columnspan=3)
+    genre.grid(row=1, column=0, columnspan=3)
+    season.grid(row=2, column=0, columnspan=2)
+    removeButton.grid(row=2, column=2)
 
 def runApplication(data, animeData): 
 
@@ -272,14 +284,21 @@ def main():
 
     """ Setup saved data from Database """
     databaseData = formatdata(loadDatabase())
-    
+
     """ Setup anime data from json file """
     animeData = loadAnimeData()
-
+    
     """ Update Current Season """
     # updateCurrentSeason(animeData)
 
-    """ Run GUI Application """
-    runApplication(databaseData, animeData)
+    """ Run Object Oriented Application """
+    root = tk.Tk()
+    root.geometry("930x520")
+    root.title('AnimeWatchlist')
+    tk.Grid.rowconfigure(root, 0, weight=1)
+    tk.Grid.columnconfigure(root, 0, weight=0)
+    tk.Grid.columnconfigure(root, 1, weight=1)
+    mainpage.AnimeWatchlistUI(root, databaseData,animeData)
+    root.mainloop()
     
 main()

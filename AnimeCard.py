@@ -12,6 +12,14 @@ class AnimeCard():
 
     def __init__(self, data, category): 
 
+        self.name = ''
+        self.season = '' 
+        self.status = ''
+        self.genre = ''
+        self.pictureurl = '' 
+        self.source = ''
+        self.currentep = 0
+        
         if category == 'CurrentSeason': 
             self.name = data[1]
             self.season = data[2]
@@ -30,7 +38,9 @@ class AnimeCard():
             self.genre = data[4]
             self.currentep = data[5]
             self.pictureurl = data[6]
-
+            
+    def __str__(self): 
+        return "{} | {} | {}".format(self.name, self.season, self.genre)
 
 
 
