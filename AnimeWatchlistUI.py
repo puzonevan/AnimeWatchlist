@@ -1,15 +1,16 @@
 import tkinter as tk 
-import pprint
 import mysql.connector
+# Debug 
+import pprint, time
 
 class AnimeWatchlistUI(tk.Frame): 
 
-    def __init__(self, parent, dbData, animeData):
+    def __init__(self, parent, database, dbData, animeData):
 
         # Debug 
         # pprint.pprint(dbData)
         # pprint.pprint(animeData)
-
+        
         """ Root frame """
         tk.Frame.__init__(self, parent)
         self.parent = parent

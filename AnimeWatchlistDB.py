@@ -1,4 +1,9 @@
 import mysql.connector 
+import AnimeCard
+
+""" CONSTANTS """
+SEASON = 'SUMMER'
+YEAR = '2020'
 
 class Database(): 
     
@@ -11,6 +16,32 @@ class Database():
         )
         self.cursor = self.LOCALSERVER.cursor()
 
+    """ Loading Data """
+    def loadDatabase(self): 
+        output = {}
+        self.cursor.execute("SHOW TABLES")
+        tables = []
+
+        # Get names of tables
+        for (table,) in self.cursor: 
+            tables.append(table,)
+
+        # Put all data from each table
+        for table in tables: 
+            sql = "SELECT * FROM {}".format(table)
+            self.cursor.execute(sql)
+            output[table] = self.cursor.fetchall()
+
+        # Format output
+        for category in output.keys(): 
+            categoryanime = []
+            for anime in output.get(category): 
+                card = AnimeCard.AnimeCard(anime, category)
+                categoryanime.append(card)
+            output[category] = categoryanime
+        
+        return output
+
     """ Table Creators """
     def createTableCurrentSeason(self): 
         self.cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Source VARCHAR(255))")
@@ -21,7 +52,46 @@ class Database():
 
     """ Update Tables """
     def updateCurrentSeasonTable(self, animeData): 
-        pass
+
+        # Drop current table: 
+        self.cursor.execute('DROP TABLE CurrentSeason')
+
+        # Create new table: 
+        self.createTableCurrentSeason()
+
+        # Filter method based on season and year
+        def filterCurrentSeason(animeData): 
+            output = []
+            for anime in animeData: 
+                if anime.get('animeSeason').get('season') == SEASON and str(anime.get('animeSeason').get('year')) == YEAR:
+                    output.append(anime)
+            return output 
+        filteredanime = filterCurrentSeason(animeData)
+
+        # Add each anime from the filtered data to the table
+        for anime in filteredanime: 
+            title = ' '
+            genre = ' '
+            if 'synonym' in anime.keys(): 
+                title = anime.get('synonym')[0]
+            else: 
+                title = anime.get('title')
+
+            if 'tags' in anime.keys() and len(anime.get('tags')) > 0: 
+                genre = anime.get('tags')[0]
+
+            season = anime.get('animeSeason').get('season') + ' ' + str(anime.get('animeSeason').get('year'))
+            sql = "INSERT INTO CurrentSeason (Name, Season, Status, Genre, Source) VALUES (%s, %s, %s, %s, %s)"
+            vals = (
+                title,
+                season, 
+                anime.get('status'), 
+                genre,
+                anime.get('sources')[0]
+            )
+        self.cursor.execute(sql, vals)
+        self.LOCALSERVER.commit()
+
     def updateFinishedTable(self): 
         pass 
     def updateWatchlistTable(self): 
