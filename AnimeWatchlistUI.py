@@ -30,13 +30,16 @@ class AnimeWatchlistUI(tk.Frame):
         # pprint.pprint(self.watchlistFrames)
 
         """ Left sidebar frame """
-        self.leftsidebar = LeftSideBar(parent, self.categories, self.watchlistFrames)
+        self.leftsidebar = LeftSideBar(parent, database, self.categories, self.watchlistFrames)
         self.leftsidebar.grid(row=0, column=0, sticky="nsw")
+
+        """ Refresh frames """ 
+        
 
 class LeftSideBar(tk.Frame): 
     
 
-    def __init__(self, parent, categories, watchlistframes):
+    def __init__(self, parent, database, categories, watchlistframes):
 
         # Debug 
         # pprint.pprint(categories) 
@@ -52,7 +55,7 @@ class LeftSideBar(tk.Frame):
             self, text='Add Watchlist', 
             highlightbackground='#242629', 
             pady=10,
-            command = self.addToWatchlist,
+            command = lambda: self.addWatchlistTable(database),
         )
         self.addWatchlist.grid(row=0, column=0)
         
@@ -73,7 +76,7 @@ class LeftSideBar(tk.Frame):
     def raiseFrame(self, frame): 
         frame.tkraise()
 
-    def addToWatchlist(self): 
+    def addWatchlistTable(self, database): 
         
         inputWindow = tk.Toplevel(self)
         inputWindow.geometry("210x80")
@@ -85,9 +88,16 @@ class LeftSideBar(tk.Frame):
         nameLabel.place(x=10, y=20)
         nameEntry.place(x=10, y=40)
 
+        def addTableToDatabaseAndRefresh(name): 
+            if name != '': 
+                database.createTableWatchlist(name)
+                inputWindow.destroy()
+            
+
         addbutton = tk.Button(
             inputWindow, text="Add",
             highlightbackground='#242629',
+            command= lambda: addTableToDatabaseAndRefresh(nameEntry.get()),
         )
         addbutton.place(x=150, y=40)
 

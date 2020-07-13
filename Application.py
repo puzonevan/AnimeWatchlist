@@ -38,6 +38,7 @@ def main():
 
     mainpage.AnimeWatchlistUI(root, database, database.loadDatabase(), animeData)
 
+    
     root.mainloop()
     
 main()
