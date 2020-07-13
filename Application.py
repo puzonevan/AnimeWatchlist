@@ -19,7 +19,6 @@ def loadAnimeData():
     jsonFile.close()
     return animeData
 
-
 def main(): 
 
     """ Setup saved data from Database """
@@ -30,7 +29,7 @@ def main():
 
     """ Run Object Oriented Application """
     root = tk.Tk()
-    root.geometry("930x520")
+    root.geometry("950x550")
     root.title('AnimeWatchlist')
 
     tk.Grid.rowconfigure(root, 0, weight=1)

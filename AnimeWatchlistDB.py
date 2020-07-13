@@ -99,7 +99,7 @@ class Database():
 
     """ Add/removes to/from Watchlists """ 
     def addToWatchlist(self, name, animecard): 
-        sql = "INSERT INTO {} (Name, Season, Status, Genre, CurrentEpisode, Picture) VALUES (%s, %s, %s, %s, %s)".format(name)
+        sql = "INSERT INTO {} (Name, Season, Status, Genre, CurrentEpisode, Picture) VALUES (%s, %s, %s, %s, %s, %s)".format(name)
         vals = (
             animecard.name, 
             animecard.season, 
