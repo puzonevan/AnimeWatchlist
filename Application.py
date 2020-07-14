@@ -29,7 +29,7 @@ def main():
 
     """ Run Object Oriented Application """
     root = tk.Tk()
-    root.geometry("950x550")
+    root.geometry("1000x900")
     root.title('AnimeWatchlist')
 
     tk.Grid.rowconfigure(root, 0, weight=1)

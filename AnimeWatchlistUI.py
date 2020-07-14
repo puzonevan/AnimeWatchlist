@@ -115,27 +115,67 @@ class WatchlistFrame(tk.Frame):
         self.parent = parent
         self.config(bg='#16161a')
 
-        """ AnimeCard frames """
-        row = 0
-        column = 0 
-        # for animecard in animeCards: 
-        #     self.animeCard = AnimeCardFrame(self, animecard)
-        #     self.animeCard.grid(row=row, column=column)
-        #     column += 1
-        #     if column == 4:
-        #         column = 0
-        #         row += 1
 
-        self.animeCardFrames = [] 
-        for animecard in animeCards: 
-            animeCard = AnimeCardFrame(self, database, categories, category, animecard)
-            animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
-            self.animeCardFrames.append(animeCard)
-            column += 1
-            if column == 4:
-                column = 0
-                row += 1
+
+        """ AnimeCard frames """
+        self.animeCardFrames = []
+        self.start = 0
+        self.finish = 16
+
+        def createAnimeCardFrames(start, finish): 
+            row = 1
+            column = 0
+            for animecard in animeCards[start:finish]: 
+                animeCard = AnimeCardFrame(self, database, categories, category, animecard)
+                animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
+                self.animeCardFrames.append(animeCard)
+                column += 1
+                if column == 4:
+                    column = 0
+                    row += 1
+
+        createAnimeCardFrames(self.start, self.finish)
         
+
+        def leftpageclick(): 
+
+            if self.start >= 16: 
+                self.start -= 16
+                self.finish -= 16
+
+            for animeCardFrame in self.animeCardFrames:
+                animeCardFrame.destroy
+
+            createAnimeCardFrames(self.start, self.finish)
+
+        self.leftpage = tk.Button(
+            self, text="<<", 
+            highlightbackground="#16161a",
+            command=leftpageclick,
+        )
+
+        def rightpageclick(): 
+            
+            self.start += 16
+            self.finish += 16
+
+            for animeCardFrame in self.animeCardFrames:
+                animeCardFrame.destroy
+
+            createAnimeCardFrames(self.start, self.finish)
+
+        self.rightpage = tk.Button(
+            self, text=">>",
+            highlightbackground="#16161a",
+            command=rightpageclick,
+        )
+        self.leftpage.grid(row=5, column=1)
+        self.rightpage.grid(row=5, column=2)
+    
+    
+
+
+
 class AnimeCardFrame(tk.Frame): 
     
     def __init__(self, parent, database, categories, category, animecard): 
@@ -204,6 +244,7 @@ class AnimeCardFrame(tk.Frame):
             addwindow.destroy()
 
         row = 1
+        column = 0
         for cat in categories: 
             if cat != currentcategory:
                 catbutton = tk.Button(
@@ -211,10 +252,10 @@ class AnimeCardFrame(tk.Frame):
                     highlightbackground='#242629',
                     command=lambda cat=cat: addToDatabase(cat, animecard)
                 )
-                catbutton.grid(row=row, column=0)
+                catbutton.grid(row=row, column=column)
                 row += 1
                 if row == 4: 
-                    row = 0 
+                    row = 1 
                     column += 1
 
     def removeAnime(self, database, category, animecard): 
