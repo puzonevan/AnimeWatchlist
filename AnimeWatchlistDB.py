@@ -136,7 +136,26 @@ class Database():
         self.LOCALSERVER.commit()
 
     """ Filter Tables """ 
-    def filterByGenre(self, watchlist, genre): 
-        pass
+    def filterByGenre(self, watchlist): 
+        sql = "SELECT * FROM {} ORDER BY Genre".format(watchlist)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
+    def filterByAlpha(self, watchlist):
+        sql = "SELECT * FROM {} ORDER BY Name".format(watchlist)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
+    def filterBySeason(self, watchlist): 
+        sql = "SELECT * FROM {} ORDER BY Season".format(watchlist)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+    
+    """ Create Anime Cards """ 
+    def createAnimeCards(self, filtereddata, category): 
+        output = []
+        for anime in filtereddata: 
+            output.append(AnimeCard.AnimeCard(anime, category))
+        return output
     
     

@@ -24,7 +24,7 @@ class AnimeWatchlistUI(tk.Frame):
         """ Watchlist frames """
         self.watchlistFrames = []
         for category in self.categories: 
-            watchlist = WatchlistFrame(parent, database, self.categories, category, dbData.get(category))
+            watchlist = WatchlistFrame(parent, database, self.categories, category, dbData.get(category), animeData)
             watchlist.grid(row=0, column=1, sticky="nsew")
             self.watchlistFrames.append(watchlist)
         # pprint.pprint(self.watchlistFrames)
@@ -104,77 +104,129 @@ class LeftSideBar(tk.Frame):
 
 class WatchlistFrame(tk.Frame):
     
-    def __init__(self, parent, database, categories, category, animeCards):
+    def __init__(self, parent, database, categories, category, animeCards, animeData):
+
+        """ Instance Variables """ 
+        self.database = database 
+        self.categories = categories
+        self.category = category
+        self.animeCards = animeCards
+        self.animeData = animeData 
 
         # Debug 
+        # pprint.pprint(self.database)
+        # pprint.pprint(self.categories)
+        # print(categories)
         # pprint.pprint(animeCards)
-        # print(category)
+        # pprint.pprint(animeData)
 
         """ Initialize frame """ 
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.config(bg='#16161a')
 
+        """ Add Anime button """ 
+        self.addanimebutton = tk.Button(
+            self, text='Add Anime', 
+            highlightbackground='#16161a',
+            command=self.addAnime,
+        )
+        self.addanimebutton.grid(row=0, column=2)
 
+        """ Filter Frame """ 
+        filterFrame = tk.Frame(self)
+        filterFrame.grid(row=0, column=3)
+        self.filteroptions = tk.StringVar(self)
+        self.filteroptions.set('A-Z')
+        self.filterOptions = tk.OptionMenu(
+            filterFrame, self.filteroptions,
+            'Genre','Seasons', 
+        )
+        self.filterOptions.config(bg='#16161a')
+        self.filterOptions.grid(row=0, column=0)
+
+        self.filterbutton = tk.Button(
+            filterFrame, text='Filter', 
+            highlightbackground='#16161a',
+            command=self.filterCommand,
+        )
+        self.filterbutton.grid(row=0, column=1)
 
         """ AnimeCard frames """
         self.animeCardFrames = []
         self.start = 0
         self.finish = 16
 
-        def createAnimeCardFrames(start, finish): 
-            row = 1
-            column = 0
-            for animecard in animeCards[start:finish]: 
-                animeCard = AnimeCardFrame(self, database, categories, category, animecard)
-                animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
-                self.animeCardFrames.append(animeCard)
-                column += 1
-                if column == 4:
-                    column = 0
-                    row += 1
-
-        createAnimeCardFrames(self.start, self.finish)
+        self.createAnimeCardFrames()
         
-
-        def leftpageclick(): 
-
-            if self.start >= 16: 
-                self.start -= 16
-                self.finish -= 16
-
-            for animeCardFrame in self.animeCardFrames:
-                animeCardFrame.destroy
-
-            createAnimeCardFrames(self.start, self.finish)
-
-        self.leftpage = tk.Button(
+        self.leftpagebutton = tk.Button(
             self, text="<<", 
             highlightbackground="#16161a",
-            command=leftpageclick,
+            command=self.leftPageCommand,
         )
 
-        def rightpageclick(): 
-            
-            self.start += 16
-            self.finish += 16
-
-            for animeCardFrame in self.animeCardFrames:
-                animeCardFrame.destroy
-
-            createAnimeCardFrames(self.start, self.finish)
-
-        self.rightpage = tk.Button(
+        self.rightpagebutton = tk.Button(
             self, text=">>",
             highlightbackground="#16161a",
-            command=rightpageclick,
+            command=self.rightPageCommand,
         )
-        self.leftpage.grid(row=5, column=1)
-        self.rightpage.grid(row=5, column=2)
-    
-    
+        self.leftpagebutton.grid(row=5, column=1)
+        self.rightpagebutton.grid(row=5, column=2)
 
+    def deleteCurrentAnimeCardFrames(self): 
+        for animeCardFrame in self.animeCardFrames:
+            animeCardFrame.destroy
 
+    def createAnimeCardFrames(self): 
+        row = 1
+        column = 0
+        for animecard in self.animeCards[self.start:self.finish]: 
+            animeCard = AnimeCardFrame(self, self.database, self.categories, self.category, animecard)
+            animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
+            self.animeCardFrames.append(animeCard)
+            column += 1
+            if column == 4:
+                column = 0
+                row += 1
+    
+    def leftPageCommand(self): 
+        if self.start >= 16: 
+            self.start -= 16
+            self.finish -= 16
+
+        self.deleteCurrentAnimeCardFrames()
+        self.createAnimeCardFrames()
+
+    def rightPageCommand(self):
+        self.start += 16
+        self.finish += 16
+
+        self.deleteCurrentAnimeCardFrames()
+        self.createAnimeCardFrames()
+
+    def addAnime(self): 
+        pass
+    
+    def filterCommand(self): 
+        option = self.filteroptions.get()
+        
+        if option == 'A-Z': 
+            filtereddata = self.database.filterByAlpha(self.category)
+            self.animeCards = self.database.createAnimeCards(filtereddata, self.category)
+            self.deleteCurrentAnimeCardFrames()
+            self.createAnimeCardFrames()
+        elif option == 'Genre': 
+            filtereddata = self.database.filterByGenre(self.category)
+            self.animeCards = self.database.createAnimeCards(filtereddata, self.category)
+            self.deleteCurrentAnimeCardFrames()
+            self.createAnimeCardFrames()
+        elif option == 'Seasons': 
+            filtereddata = self.database.filterBySeason(self.category)
+            self.animeCards = self.database.createAnimeCards(filtereddata, self.category)
+            self.deleteCurrentAnimeCardFrames()
+            self.createAnimeCardFrames()
+        
+        
 
 class AnimeCardFrame(tk.Frame): 
     
@@ -266,5 +318,8 @@ class AnimeCardFrame(tk.Frame):
         self.destroy()
         
 
+class AnimeCardSearchFrame(tk.Frame): 
 
+    def __init__(self, parent): 
+        pass
 
