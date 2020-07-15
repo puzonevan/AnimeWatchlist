@@ -1,4 +1,4 @@
-import mysql.connector 
+import mysql.connector, json
 import AnimeCard
 
 """ CONSTANTS """
@@ -7,6 +7,7 @@ YEAR = '2020'
 
 class Database(): 
     
+    """ Constructor """
     def __init__(self): 
         self.LOCALSERVER = mysql.connector.connect(
             host='localhost',
@@ -16,10 +17,11 @@ class Database():
         )
         self.cursor = self.LOCALSERVER.cursor()
 
-    """ Loading Data """
+    """ loadDatabase method - retrieves data from database """
     def loadDatabase(self): 
-        output = {}
+
         self.cursor.execute("SHOW TABLES")
+        output = {}
         tables = []
 
         # Get names of tables
@@ -42,7 +44,7 @@ class Database():
         
         return output
 
-    """ Table Creators """
+    """ Table creation methods - create given tables in database """
     def createTableCurrentSeason(self): 
         self.cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Source VARCHAR(255))")
     def createTableFinished(self): 
@@ -51,7 +53,7 @@ class Database():
         sql = "CREATE TABLE {} (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), CurrentEpisode TINYINT, Picture VARCHAR(255))".format(name)
         self.cursor.execute(sql)
 
-    """ Update Tables """
+    """ Update table methods """
     def updateCurrentSeasonTable(self, animeData): 
 
         # Drop current table: 
@@ -98,7 +100,7 @@ class Database():
     def updateWatchlistTable(self): 
         pass
 
-    """ Add/removes to/from Watchlists """ 
+    """ Add/removes to/from watchlist tables """ 
     def addToWatchlist(self, name, animecard): 
         sql = "INSERT INTO {} (Name, Season, Status, Genre, CurrentEpisode, Picture) VALUES (%s, %s, %s, %s, %s, %s)".format(name)
         vals = (
@@ -158,4 +160,29 @@ class Database():
             output.append(AnimeCard.AnimeCard(anime, category))
         return output
     
+class AnimeData(): 
+
+    """ Constructor """ 
+    def __init__(self): 
+        self.data = self.loadAnimeData()
+
+    """ loadAnimeData method """
+    def loadAnimeData(self): 
+        jsonFile = open('./anime-offline-database-master/anime-offline-database.json')
+        animeData = json.load(jsonFile).get('data')
+        jsonFile.close()
+
+        output = []
+        # Format 
+        for anime in animeData: 
+            filteredanime = {}
+            filteredanime['name'] = anime.get('title')
+            filteredanime['type'] = anime.get('type')
+            filteredanime['episodecount'] = anime.get('episodes')
+            filteredanime['genres'] = anime.get('tags')
+            filteredanime['status'] = anime.get('status')
+            filteredanime['season'] = "{} {}".format(anime.get('animeSeason').get('season'), anime.get('animeSeason').get('year'))
+
+            output.append(filteredanime)
+        return output
     

@@ -1,7 +1,7 @@
 import tkinter as tk 
 import mysql.connector
 # Debug 
-import pprint, time
+# import pprint, time
 
 """ Global Variables """
 database = None 
@@ -395,7 +395,7 @@ class AnimeCardFrame(tk.Frame):
         
 
 
-""" Search Window """ 
+""" Search Window Class  """ 
 class AnimeCardSearchFrame(tk.Frame): 
 
     def __init__(self, parent): 
