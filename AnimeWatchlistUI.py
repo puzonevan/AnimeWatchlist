@@ -3,13 +3,20 @@ import mysql.connector
 # Debug 
 import pprint, time
 
+""" Global Variables """
+database = None 
+dbData = None
+animeData = None 
+
+""" Main Window """
 class AnimeWatchlistUI(tk.Frame): 
 
     def __init__(self, parent, database, dbData, animeData):
 
-        # Debug 
-        # pprint.pprint(dbData)
-        # pprint.pprint(animeData)
+        """ Global Variables """ 
+        database = database
+        dbData = dbData 
+        animeData = animeData
         
         """ Root frame """
         tk.Frame.__init__(self, parent)
@@ -17,29 +24,34 @@ class AnimeWatchlistUI(tk.Frame):
         
         """ Watchlist categories """
         self.categories = []
-        for category in dbData.keys(): 
-            self.categories.append(category)
-        # pprint.pprint(self.categories)
+        self.databaseCategories(dbData)
         
         """ Watchlist frames """
         self.watchlistFrames = []
-        for category in self.categories: 
-            watchlist = WatchlistFrame(parent, database, self.categories, category, dbData.get(category), animeData)
-            watchlist.grid(row=0, column=1, sticky="nsew")
-            self.watchlistFrames.append(watchlist)
-        # pprint.pprint(self.watchlistFrames)
+        self.createWatchlistFrames(dbData)
 
         """ Left sidebar frame """
-        self.leftsidebar = LeftSideBar(parent, database, self.categories, self.watchlistFrames)
+        self.leftsidebar = LeftSideBar(parent, self.categories, self.watchlistFrames)
         self.leftsidebar.grid(row=0, column=0, sticky="nsw")
 
-        """ Refresh frames """ 
-        
+    def databaseCategories(self, dbData): 
+        for category in dbData.keys(): 
+            self.categories.append(category)
+
+    def createWatchlistFrames(self, dbData): 
+        for category in self.categories: 
+            watchlist = WatchlistFrame(self.parent, self.categories, category, dbData.get(category))
+            watchlist.grid(row=0, column=1, sticky="nsew")
+            self.watchlistFrames.append(watchlist)
 
 class LeftSideBar(tk.Frame): 
     
 
-    def __init__(self, parent, database, categories, watchlistframes):
+    def __init__(self, parent, categories, watchlistframes):
+
+        """ Instance Variables """  
+        self.categories = categories 
+        self.watchlistframes = watchlistframes
 
         # Debug 
         # pprint.pprint(categories) 
@@ -61,6 +73,7 @@ class LeftSideBar(tk.Frame):
         
         """ Category buttons """
         self.categorybuttons = []
+        self.buttonsrow = 1
         for position in range(len(watchlistframes)): 
             button = tk.Button(
                 self, text=categories[position], 
@@ -68,7 +81,8 @@ class LeftSideBar(tk.Frame):
                 pady=5, 
                 command= lambda position=position: self.raiseFrame(watchlistframes[position])
             )
-            button.grid(row=position+1, column=0)
+            button.grid(row=self.buttonsrow, column=0)
+            self.buttonsrow += 1
             self.categorybuttons.append(button)
         # pprint.pprint(self.categorybuttons)
 
@@ -94,6 +108,17 @@ class LeftSideBar(tk.Frame):
                 inputWindow.destroy()
             
 
+            categorybutton = tk.Button(
+                self, text=name, 
+                highlightbackground='#242629', 
+                pady=5, 
+            )
+
+            self.categorybuttons.append(categorybutton)
+            categorybutton.grid(row=self.buttonsrow, column=0)
+            self.buttonsrow += 1
+            
+
         addbutton = tk.Button(
             inputWindow, text="Add",
             highlightbackground='#242629',
@@ -101,17 +126,14 @@ class LeftSideBar(tk.Frame):
         )
         addbutton.place(x=150, y=40)
 
-
 class WatchlistFrame(tk.Frame):
     
-    def __init__(self, parent, database, categories, category, animeCards, animeData):
+    def __init__(self, parent, categories, category, animeCards):
 
         """ Instance Variables """ 
-        self.database = database 
         self.categories = categories
         self.category = category
         self.animeCards = animeCards
-        self.animeData = animeData 
 
         # Debug 
         # pprint.pprint(self.database)
@@ -181,7 +203,7 @@ class WatchlistFrame(tk.Frame):
         row = 1
         column = 0
         for animecard in self.animeCards[self.start:self.finish]: 
-            animeCard = AnimeCardFrame(self, self.database, self.categories, self.category, animecard)
+            animeCard = AnimeCardFrame(self, database, self.categories, self.category, animecard)
             animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
             self.animeCardFrames.append(animeCard)
             column += 1
@@ -205,28 +227,31 @@ class WatchlistFrame(tk.Frame):
         self.createAnimeCardFrames()
 
     def addAnime(self): 
-        pass
-    
+        
+        """ Initialize new window """
+        searchaddanimewindow= tk.Toplevel(self)
+        searchaddanimewindow.title('Add Anime')
+        searchaddanimewindow.geometry('200x500')
+        searchaddanimewindow.config(bg='#242629')
+
     def filterCommand(self): 
         option = self.filteroptions.get()
         
         if option == 'A-Z': 
-            filtereddata = self.database.filterByAlpha(self.category)
-            self.animeCards = self.database.createAnimeCards(filtereddata, self.category)
+            filtereddata = database.filterByAlpha(self.category)
+            self.animeCards = database.createAnimeCards(filtereddata, self.category)
             self.deleteCurrentAnimeCardFrames()
             self.createAnimeCardFrames()
         elif option == 'Genre': 
-            filtereddata = self.database.filterByGenre(self.category)
-            self.animeCards = self.database.createAnimeCards(filtereddata, self.category)
+            filtereddata = database.filterByGenre(self.category)
+            self.animeCards = database.createAnimeCards(filtereddata, self.category)
             self.deleteCurrentAnimeCardFrames()
             self.createAnimeCardFrames()
         elif option == 'Seasons': 
-            filtereddata = self.database.filterBySeason(self.category)
-            self.animeCards = self.database.createAnimeCards(filtereddata, self.category)
+            filtereddata = database.filterBySeason(self.category)
+            self.animeCards = database.createAnimeCards(filtereddata, self.category)
             self.deleteCurrentAnimeCardFrames()
             self.createAnimeCardFrames()
-        
-        
 
 class AnimeCardFrame(tk.Frame): 
     
@@ -318,8 +343,11 @@ class AnimeCardFrame(tk.Frame):
         self.destroy()
         
 
+
+
+""" Search Window """ 
 class AnimeCardSearchFrame(tk.Frame): 
 
     def __init__(self, parent): 
+        
         pass
-

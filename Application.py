@@ -17,7 +17,20 @@ def loadAnimeData():
     jsonFile = open('./anime-offline-database-master/anime-offline-database.json')
     animeData = json.load(jsonFile).get('data')
     jsonFile.close()
-    return animeData
+
+    output = []
+    # Format 
+    for anime in animeData: 
+        filteredanime = {}
+        filteredanime['name'] = anime.get('title')
+        filteredanime['type'] = anime.get('type')
+        filteredanime['episodecount'] = anime.get('episodes')
+        filteredanime['genres'] = anime.get('tags')
+        filteredanime['status'] = anime.get('status')
+        filteredanime['season'] = "{} {}".format(anime.get('animeSeason').get('season'), anime.get('animeSeason').get('year'))
+
+        output.append(filteredanime)
+    return output
 
 def main(): 
 
