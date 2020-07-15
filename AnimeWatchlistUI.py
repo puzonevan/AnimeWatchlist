@@ -8,32 +8,42 @@ database = None
 dbData = None
 animeData = None 
 
-""" Main Window """
+""" Main Window Class """
 class AnimeWatchlistUI(tk.Frame): 
 
-    def __init__(self, parent, database, dbData, animeData):
+    """ Constructor """
+    def __init__(self, parent, db, dbDatas, animeDatas):
+
+        """ Initialize Frame """
+        tk.Frame.__init__(self, parent)
 
         """ Global Variables """ 
-        database = database
-        dbData = dbData 
-        animeData = animeData
+        # Parameters
+        global database
+        database = db
+        global dbData
+        dbData = dbDatas
+        global animeData
+        animeData = animeDatas
+
+        """ Instance Variables """ 
+        # Non-Parameters
+        self.parent = parent 
+        self.categories = []
+        self.watchlistFrames = []
         
-        """ Root frame """
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
         
         """ Watchlist categories """
-        self.categories = []
         self.databaseCategories(dbData)
         
         """ Watchlist frames """
-        self.watchlistFrames = []
         self.createWatchlistFrames(dbData)
 
         """ Left sidebar frame """
         self.leftsidebar = LeftSideBar(parent, self.categories, self.watchlistFrames)
         self.leftsidebar.grid(row=0, column=0, sticky="nsw")
 
+    """ Helper functions for init """
     def databaseCategories(self, dbData): 
         for category in dbData.keys(): 
             self.categories.append(category)
@@ -44,49 +54,56 @@ class AnimeWatchlistUI(tk.Frame):
             watchlist.grid(row=0, column=1, sticky="nsew")
             self.watchlistFrames.append(watchlist)
 
+""" Left Side Bar Class """
 class LeftSideBar(tk.Frame): 
     
-
+    """ Constructor """
     def __init__(self, parent, categories, watchlistframes):
-
-        """ Instance Variables """  
-        self.categories = categories 
-        self.watchlistframes = watchlistframes
-
-        # Debug 
-        # pprint.pprint(categories) 
-        # pprint.pprint(watchlistframes)
 
         """ Initialize frame """
         tk.Frame.__init__(self, parent)
-        self.parent = parent
         self.config(bg='#242629', padx=15)
 
+        """ Instance Variables """  
+        # Parameters 
+        self.parent = parent
+        self.categories = categories 
+        self.watchlistframes = watchlistframes
+        
+        # Non-Parameters
+        self.addwatchlistbutton = None
+        self.watchlistbuttons = []
+        self.buttonsrow = 1
+        
         """ AddToWatchlist button """
-        self.addWatchlist = tk.Button(
+        self.createAddWatchlistButton()
+        
+        """ Category buttons """
+        self.createWatchlistButtons()
+
+    """ Helper functions for init """
+    def createAddWatchlistButton(self): 
+        self.addwatchlistbutton = tk.Button(
             self, text='Add Watchlist', 
             highlightbackground='#242629', 
             pady=10,
             command = lambda: self.addWatchlistTable(database),
         )
-        self.addWatchlist.grid(row=0, column=0)
-        
-        """ Category buttons """
-        self.categorybuttons = []
-        self.buttonsrow = 1
-        for position in range(len(watchlistframes)): 
+        self.addwatchlistbutton.grid(row=0, column=0)
+
+    def createWatchlistButtons(self): 
+        for position in range(len(self.watchlistframes)): 
             button = tk.Button(
-                self, text=categories[position], 
+                self, text=self.categories[position], 
                 highlightbackground='#242629', 
                 pady=5, 
-                command= lambda position=position: self.raiseFrame(watchlistframes[position])
+                command= lambda position=position: self.raiseFrame(self.watchlistframes[position])
             )
             button.grid(row=self.buttonsrow, column=0)
             self.buttonsrow += 1
-            self.categorybuttons.append(button)
-        # pprint.pprint(self.categorybuttons)
+            self.watchlistbuttons.append(button)
 
-    
+    """ Button Commands """
     def raiseFrame(self, frame): 
         frame.tkraise()
 
@@ -114,7 +131,7 @@ class LeftSideBar(tk.Frame):
                 pady=5, 
             )
 
-            self.categorybuttons.append(categorybutton)
+            self.watchlistbuttons.append(categorybutton)
             categorybutton.grid(row=self.buttonsrow, column=0)
             self.buttonsrow += 1
             
@@ -126,28 +143,47 @@ class LeftSideBar(tk.Frame):
         )
         addbutton.place(x=150, y=40)
 
+""" Watchlist Class """
 class WatchlistFrame(tk.Frame):
     
+    """ Constructor """
     def __init__(self, parent, categories, category, animeCards):
 
+        """ Initialize frame """ 
+        tk.Frame.__init__(self, parent)
+        self.config(bg='#16161a')
+
         """ Instance Variables """ 
+        # Parameters
         self.categories = categories
         self.category = category
         self.animeCards = animeCards
 
-        # Debug 
-        # pprint.pprint(self.database)
-        # pprint.pprint(self.categories)
-        # print(categories)
-        # pprint.pprint(animeCards)
-        # pprint.pprint(animeData)
-
-        """ Initialize frame """ 
-        tk.Frame.__init__(self, parent)
+        # Non-Parameters
         self.parent = parent
-        self.config(bg='#16161a')
+        self.addanimebutton = None
+        self.defaultoption = None 
+        self.filterOptions = None 
+        self.animeCardFrames = [] 
+        self.start = 0
+        self.finish = 16
+        self.leftpagebutton = None 
+        self.rightpagebutton = None 
 
-        """ Add Anime button """ 
+        """ Initialize Add Anime button """ 
+        self.createAddAnimeButton()
+
+        """ Filter Frame """ 
+        self.createFilterFrame()
+
+        """ AnimeCard frames """
+        self.createAnimeCardFrames()
+        
+        """ Left/Right page buttons """
+        self.createLeftRightPageButtons()
+
+    """ Helper functions for init """
+    def createAddAnimeButton(self): 
         self.addanimebutton = tk.Button(
             self, text='Add Anime', 
             highlightbackground='#16161a',
@@ -155,63 +191,57 @@ class WatchlistFrame(tk.Frame):
         )
         self.addanimebutton.grid(row=0, column=2)
 
-        """ Filter Frame """ 
+    def createLeftRightPageButtons(self): 
+        self.leftpagebutton = tk.Button(
+            self, text="<<", 
+            highlightbackground="#16161a",
+            command=self.leftButtonCommand,
+        )
+        self.rightpagebutton = tk.Button(
+            self, text=">>",
+            highlightbackground="#16161a",
+            command=self.rightButtonCommand,
+        )
+        self.leftpagebutton.grid(row=5, column=1)
+        self.rightpagebutton.grid(row=5, column=2)
+    
+    def createFilterFrame(self):
         filterFrame = tk.Frame(self)
         filterFrame.grid(row=0, column=3)
-        self.filteroptions = tk.StringVar(self)
-        self.filteroptions.set('A-Z')
+        self.defaultoption = tk.StringVar(self)
+        self.defaultoption.set('A-Z')
         self.filterOptions = tk.OptionMenu(
-            filterFrame, self.filteroptions,
+            filterFrame, self.defaultoption,
             'Genre','Seasons', 
         )
         self.filterOptions.config(bg='#16161a')
         self.filterOptions.grid(row=0, column=0)
 
-        self.filterbutton = tk.Button(
+        filterbutton = tk.Button(
             filterFrame, text='Filter', 
             highlightbackground='#16161a',
             command=self.filterCommand,
         )
-        self.filterbutton.grid(row=0, column=1)
-
-        """ AnimeCard frames """
-        self.animeCardFrames = []
-        self.start = 0
-        self.finish = 16
-
-        self.createAnimeCardFrames()
-        
-        self.leftpagebutton = tk.Button(
-            self, text="<<", 
-            highlightbackground="#16161a",
-            command=self.leftPageCommand,
-        )
-
-        self.rightpagebutton = tk.Button(
-            self, text=">>",
-            highlightbackground="#16161a",
-            command=self.rightPageCommand,
-        )
-        self.leftpagebutton.grid(row=5, column=1)
-        self.rightpagebutton.grid(row=5, column=2)
-
-    def deleteCurrentAnimeCardFrames(self): 
-        for animeCardFrame in self.animeCardFrames:
-            animeCardFrame.destroy
+        filterbutton.grid(row=0, column=1)
 
     def createAnimeCardFrames(self): 
         row = 1
         column = 0
         for animecard in self.animeCards[self.start:self.finish]: 
-            animeCard = AnimeCardFrame(self, database, self.categories, self.category, animecard)
+            animeCard = AnimeCardFrame(self, self.categories, self.category, animecard)
             animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
             self.animeCardFrames.append(animeCard)
             column += 1
             if column == 4:
                 column = 0
                 row += 1
+        
+    """ Button Commands """
+    def deleteCurrentAnimeCardFrames(self): 
+        for animeCardFrame in self.animeCardFrames:
+            animeCardFrame.destroy
     
-    def leftPageCommand(self): 
+    def leftButtonCommand(self): 
         if self.start >= 16: 
             self.start -= 16
             self.finish -= 16
@@ -219,7 +249,7 @@ class WatchlistFrame(tk.Frame):
         self.deleteCurrentAnimeCardFrames()
         self.createAnimeCardFrames()
 
-    def rightPageCommand(self):
+    def rightButtonCommand(self):
         self.start += 16
         self.finish += 16
 
@@ -235,7 +265,7 @@ class WatchlistFrame(tk.Frame):
         searchaddanimewindow.config(bg='#242629')
 
     def filterCommand(self): 
-        option = self.filteroptions.get()
+        option = self.defaultoption.get()
         
         if option == 'A-Z': 
             filtereddata = database.filterByAlpha(self.category)
@@ -253,31 +283,52 @@ class WatchlistFrame(tk.Frame):
             self.deleteCurrentAnimeCardFrames()
             self.createAnimeCardFrames()
 
+""" Anime Card Class """
 class AnimeCardFrame(tk.Frame): 
     
-    def __init__(self, parent, database, categories, category, animecard): 
-
-        # Debug 
-        # print(category)
-        # print(animecard)
+    """ Constructor """
+    def __init__(self, parent, categories, category, animecard): 
 
         """ Initialize frame """ 
         tk.Frame.__init__(self, parent)
-        self.parent = parent 
         self.config(bg='#242629', padx=10, pady=10, width=300)
 
-        self.name = tk.Message(self, text=animecard.name, width=150, fg='#fffffe', bg='#242629')
-        self.season = tk.Label(self, text=animecard.season, fg='#94a1b2', bg='#242629')
-        self.genre = tk.Label(self, text=animecard.genre, fg='#94a1b2', bg='#242629')
+        """ Instance Variables """
+        # Parameters 
+        self.parent = parent 
+        self.categories = categories 
+        self.category = category 
+        self.animecard = animecard
+
+        # Non-Parameters 
+        self.name = None 
+        self.season = None 
+        self.genre = None 
+        self.addbutton = None 
+        self.removebutton = None 
+        self.linkbutton = None 
+
+        """ Name/Season/Genre """
+        self.createNameSeasonGenre()
+
+        """ Additional functionality based on watchlist category """
+        self.createAdditionalFunctionality()
+
+    """ Helper methods for init """
+    def createNameSeasonGenre(self): 
+        self.name = tk.Message(self, text=self.animecard.name, width=150, fg='#fffffe', bg='#242629')
+        self.season = tk.Label(self, text=self.animecard.season, fg='#94a1b2', bg='#242629')
+        self.genre = tk.Label(self, text=self.animecard.genre, fg='#94a1b2', bg='#242629')
         self.name.grid(row=0, column=0, columnspan=3)
         self.genre.grid(row=1, column=0, columnspan=3)
         self.season.grid(row=2, column=0, columnspan=2)
 
-        if category == 'CurrentSeason': 
+    def createAdditionalFunctionality(self): 
+        if self.category == 'CurrentSeason': 
             self.addbutton = tk.Button(
                 self, text='Add', 
                 highlightbackground='#242629', 
-                command=lambda: self.addAnime(categories, category, database, animecard),
+                command=lambda: self.addAnime(self.categories, self.category, database, self.animecard),
             )
             self.linkbutton = tk.Button(
                 self, text='Click here for source', 
@@ -285,22 +336,22 @@ class AnimeCardFrame(tk.Frame):
             )
             self.addbutton.grid(row=2, column=2)
             self.linkbutton.grid(row=3, column=0, columnspan=3)
-        elif category == 'Finished': 
+        elif self.category == 'Finished': 
             self.removebutton = tk.Button(
                 self, text='Remove', 
                 highlightbackground='#242629', 
-                command=lambda: self.removeAnime(database, category, animecard),
+                command=lambda: self.removeAnime(database, self.category, self.animecard),
             )
             self.removebutton.grid(row=2, column=2)
         else: 
             self.removebutton = tk.Button(
                 self, text='Remove',
                 highlightbackground='#242629',
-                command=lambda: self.removeAnime(database, category, animecard), 
+                command=lambda: self.removeAnime(database, self.category, self.animecard), 
             )
             self.removebutton.grid(row=2, column=2)
 
-
+    """ Button Commands """
     def addAnime(self, categories, currentcategory, database, animecard): 
         addwindow = tk.Toplevel(self)
         addwindow.title('Add to Watchlist')
@@ -342,7 +393,6 @@ class AnimeCardFrame(tk.Frame):
             database.removeFromWatchlist(category, animecard.name)
         self.destroy()
         
-
 
 
 """ Search Window """ 
