@@ -187,7 +187,7 @@ class WatchlistFrame(tk.Frame):
         self.addanimebutton = tk.Button(
             self, text='Add Anime', 
             highlightbackground='#16161a',
-            command=self.addAnime,
+            command=self.addAnimeCommand,
         )
         self.addanimebutton.grid(row=0, column=2)
 
@@ -256,13 +256,20 @@ class WatchlistFrame(tk.Frame):
         self.deleteCurrentAnimeCardFrames()
         self.createAnimeCardFrames()
 
-    def addAnime(self): 
+    def addAnimeCommand(self): 
         
         """ Initialize new window """
         searchaddanimewindow= tk.Toplevel(self)
         searchaddanimewindow.title('Add Anime')
-        searchaddanimewindow.geometry('200x500')
+        searchaddanimewindow.geometry('400x700')
         searchaddanimewindow.config(bg='#242629')
+
+        # for anime in animeData: 
+        #     animeframe = AnimeCardSearchFrame(searchaddanimewindow, anime)
+        #     animeframe.pack(side=tk.TOP, fill=tk.X)
+
+        
+
 
     def filterCommand(self): 
         option = self.defaultoption.get()
@@ -398,6 +405,43 @@ class AnimeCardFrame(tk.Frame):
 """ Search Window Class  """ 
 class AnimeCardSearchFrame(tk.Frame): 
 
-    def __init__(self, parent): 
+    def __init__(self, parent, anime): 
         
+        """ Initialize Frame """
+        tk.Frame.__init__(self, parent)
+        self.config(bg='#242629')
+
+        """ Instance Variables """ 
+        # Parameters 
+        self.parent = parent
+        self.anime = anime
+
+        # Non-Parameters 
+        self.name = None 
+        self.type = None 
+        self.season = None 
+        self.episodecount = None
+        self.genre = None 
+        self.status = None
+        self.addbutton = None
+
+        """ Name """
+        self.createName() 
+
+        """ Type Season EpCount """
+        self.createTypeSeasonEpCount()
+
+        """ Genre Status """
+        self.createGenreStatus() 
+
+    """ Helper functions for init """
+    def createName(self): 
+        self.name = tk.Message(self, text=self.anime.get('name'), fg='#fffffe', bg='#16161a')
+        self.name.grid(row=0,column=0, columnspan=3)
+
+    def createTypeSeasonEpCount(self): 
+        pass 
+
+    def createGenreStatus(self): 
         pass
+

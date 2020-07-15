@@ -159,6 +159,9 @@ class Database():
         for anime in filtereddata: 
             output.append(AnimeCard.AnimeCard(anime, category))
         return output
+
+
+  
     
 class AnimeData(): 
 
