@@ -161,16 +161,22 @@ class WatchlistFrame(tk.Frame):
 
         # Non-Parameters
         self.parent = parent
+        self.updatewatchlistbutton = None
         self.addanimebutton = None
         self.defaultoption = None 
         self.filterOptions = None 
         self.animeCardFrames = [] 
         self.start = 0
         self.finish = 16
-        self.leftpagebutton = None 
+        self.page = 1
+        self.leftpagebutton = None
+        self.pagelabel = None  
         self.rightpagebutton = None 
 
-        """ Initialize Add Anime button """ 
+        """ Update watchlist button """
+        self.createUpdateWatchlistButton()
+
+        """ Add Anime button """ 
         self.createAddAnimeButton()
 
         """ Filter Frame """ 
@@ -183,36 +189,52 @@ class WatchlistFrame(tk.Frame):
         self.createLeftRightPageButtons()
 
     """ Helper functions for init """
+    def createUpdateWatchlistButton(self): 
+        self.updatewatchlistbutton = tk.Button(
+            self, text="Update", 
+            highlightbackground='#16161a',
+        )
+        self.updatewatchlistbutton.grid(row=0,column=0)
+
     def createAddAnimeButton(self): 
         self.addanimebutton = tk.Button(
             self, text='Add Anime', 
             highlightbackground='#16161a',
             command=self.addAnimeCommand,
         )
-        self.addanimebutton.grid(row=0, column=2)
+        self.addanimebutton.grid(row=0, column=1)
 
     def createLeftRightPageButtons(self): 
+        leftrightframe = tk.Frame(self)
+        leftrightframe.grid(row=0,column=3)
         self.leftpagebutton = tk.Button(
-            self, text="<<", 
-            highlightbackground="#16161a",
+            leftrightframe, text="<<", 
+            highlightbackground='#16161a',
+            pady=5,
             command=self.leftButtonCommand,
         )
         self.rightpagebutton = tk.Button(
-            self, text=">>",
-            highlightbackground="#16161a",
+            leftrightframe, text=">>",
+            highlightbackground='#16161a',
+            pady=5,
             command=self.rightButtonCommand,
         )
-        self.leftpagebutton.grid(row=5, column=1)
-        self.rightpagebutton.grid(row=5, column=2)
+        self.pagelabel = tk.Label(
+            leftrightframe, text=str(self.page),
+            bg='#16161a', pady=6, fg='#94a1b2',
+        )
+        self.leftpagebutton.grid(row=0, column=0)
+        self.pagelabel.grid(row=0, column=1)
+        self.rightpagebutton.grid(row=0, column=2)
     
     def createFilterFrame(self):
         filterFrame = tk.Frame(self)
-        filterFrame.grid(row=0, column=3)
+        filterFrame.grid(row=0, column=2)
         self.defaultoption = tk.StringVar(self)
         self.defaultoption.set('A-Z')
         self.filterOptions = tk.OptionMenu(
             filterFrame, self.defaultoption,
-            'Genre','Seasons', 
+            'A-Z','Genre','Season',
         )
         self.filterOptions.config(bg='#16161a')
         self.filterOptions.grid(row=0, column=0)
@@ -248,6 +270,9 @@ class WatchlistFrame(tk.Frame):
 
         self.deleteCurrentAnimeCardFrames()
         self.createAnimeCardFrames()
+        if self.page > 1: 
+            self.page -= 1
+            self.pagelabel.config(text=str(self.page))
 
     def rightButtonCommand(self):
         self.start += 16
@@ -255,19 +280,36 @@ class WatchlistFrame(tk.Frame):
 
         self.deleteCurrentAnimeCardFrames()
         self.createAnimeCardFrames()
+        if self.page < (len(self.animeCards)/16):
+            self.page += 1
+            self.pagelabel.config(text=str(self.page))
 
     def addAnimeCommand(self): 
         
         """ Initialize new window """
         searchaddanimewindow= tk.Toplevel(self)
         searchaddanimewindow.title('Add Anime')
-        searchaddanimewindow.geometry('400x700')
+        searchaddanimewindow.geometry('400x750')
         searchaddanimewindow.config(bg='#242629')
 
-        # for anime in animeData: 
-        #     animeframe = AnimeCardSearchFrame(searchaddanimewindow, anime)
-        #     animeframe.pack(side=tk.TOP, fill=tk.X)
 
+
+        start = 0
+        finish = 5
+        for anime in animeData[start:finish]: 
+            animeframe = AnimeCardSearchFrame(searchaddanimewindow, anime)
+            animeframe.pack(side=tk.TOP, pady=5)
+
+        leftbutton = tk.Button(
+            searchaddanimewindow, text="<<", 
+            highlightbackground='#242629'
+        )
+        leftbutton.place(x=100, y=720)
+        rightbutton = tk.Button(
+            searchaddanimewindow, text=">>", 
+            highlightbackground='#242629'
+        )
+        rightbutton.place(x=250, y=720)
         
 
 
@@ -405,11 +447,14 @@ class AnimeCardFrame(tk.Frame):
 """ Search Window Class  """ 
 class AnimeCardSearchFrame(tk.Frame): 
 
+    """ Constructor """
     def __init__(self, parent, anime): 
         
         """ Initialize Frame """
         tk.Frame.__init__(self, parent)
-        self.config(bg='#242629')
+        self.config(bg='#16161a')
+        self.config(width=400, padx=10, pady=10)
+        
 
         """ Instance Variables """ 
         # Parameters 
@@ -424,6 +469,7 @@ class AnimeCardSearchFrame(tk.Frame):
         self.genre = None 
         self.status = None
         self.addbutton = None
+        self.linkbutton = None
 
         """ Name """
         self.createName() 
@@ -434,14 +480,66 @@ class AnimeCardSearchFrame(tk.Frame):
         """ Genre Status """
         self.createGenreStatus() 
 
+        """ Link button """
+        self.createLinkAddButton()
+
     """ Helper functions for init """
     def createName(self): 
-        self.name = tk.Message(self, text=self.anime.get('name'), fg='#fffffe', bg='#16161a')
+        self.name = tk.Message(
+            self, text=self.anime.get('name'), 
+            width=380, pady=5,
+            fg='#fffffe', bg='#16161a',
+        )
         self.name.grid(row=0,column=0, columnspan=3)
 
     def createTypeSeasonEpCount(self): 
-        pass 
+        self.type = tk.Label(
+            self, text=self.anime.get('type'), 
+            fg='#fffffe', bg='#16161a',
+        )
+        self.type.grid(row=1, column=0)
+
+        self.season = tk.Label(
+            self, text=self.anime.get('season'), 
+            fg='#fffffe', bg='#16161a',
+        )
+        self.season.grid(row=1,column=1)
+
+        self.episodecount = tk.Label(
+            self, text="Episode Count: {}".format(self.anime.get('episodecount')),
+            fg='#fffffe', bg='#16161a',
+        )
+        self.episodecount.grid(row=1, column=2)
 
     def createGenreStatus(self): 
-        pass
 
+        genretext = "" 
+        genres = self.anime.get('genres')[0:3]
+        for genre in genres: 
+            genretext += genre + " "
+
+        self.genre = tk.Label(
+            self, text=genretext, 
+            fg='#fffffe', bg='#16161a',
+        )
+        self.genre.grid(row=2, column=0, columnspan=2)
+
+        self.status = tk.Label(
+            self, text=self.anime.get('status'), 
+            fg='#fffffe', bg='#16161a',
+        )
+        self.status.grid(row=2, column=2)
+
+    def createLinkAddButton(self): 
+
+        self.linkbutton = tk.Button(
+            self, text="Click for source",
+            highlightbackground='#16161a',
+        )
+        self.linkbutton.grid(row=3, column=0, columnspan=2)
+
+        self.addbutton = tk.Button(
+            self, text='Add Anime', 
+            highlightbackground='#16161a',
+        )
+        self.addbutton.grid(row=3, column=2)

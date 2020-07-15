@@ -185,6 +185,7 @@ class AnimeData():
             filteredanime['genres'] = anime.get('tags')
             filteredanime['status'] = anime.get('status')
             filteredanime['season'] = "{} {}".format(anime.get('animeSeason').get('season'), anime.get('animeSeason').get('year'))
+            filteredanime['source'] = anime.get('sources')[0]
 
             output.append(filteredanime)
         return output
