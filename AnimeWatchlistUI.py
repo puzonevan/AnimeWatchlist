@@ -326,7 +326,6 @@ class WatchlistFrame(tk.Frame):
         # Create the new anime cards 
         self.createAnimeCardFrames()
 
-
 """ Anime Card Class """
 class AnimeCardFrame(tk.Frame): 
     
@@ -438,6 +437,7 @@ class AnimeCardFrame(tk.Frame):
         self.destroy()
         
 
+
 """ Add Anime Window Class """
 class AddAnimeWindow(tk.Frame): 
 
@@ -472,7 +472,7 @@ class AddAnimeWindow(tk.Frame):
         """ Anime Cards """ 
         self.createAnimeCards()
 
-
+    """ Helper functions for init """ 
     def createFilterArea(self): 
     
         self.filterarea = tk.Frame(self)
@@ -516,25 +516,44 @@ class AddAnimeWindow(tk.Frame):
 
         leftbutton = tk.Button(
             self.leftrightarea, text="<<", 
-            highlightbackground='#242629'
+            highlightbackground='#242629',
+            command=self.leftButtonCommand,
         )
         rightbutton = tk.Button(
             self.leftrightarea, text=">>", 
-            highlightbackground='#242629'
+            highlightbackground='#242629',
+            command=self.rightButtonCommand,
         )
 
         leftbutton.grid(row=0, column=0)
         rightbutton.grid(row=0, column=1)
 
     def createAnimeCards(self): 
-        self.start = 0
-        self.finish = 5
         row = 1
         for anime in animeData[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime)
             animeframe.grid(row=row, column=0, columnspan=4)
             self.animecards.append(animeframe)
             row += 1 
+
+    def deleteAnimeCards(self): 
+        for animecard in self.animecards: 
+            animecard.destroy()
+
+    """ Button Commands """ 
+    def leftButtonCommand(self): 
+        self.start += 5
+        self.finish += 5
+
+        self.deleteAnimeCards()
+        self.createAnimeCards()
+
+    def rightButtonCommand(self): 
+        self.start -= 5 
+        self.finish -= 5
+        
+        self.deleteAnimeCards()
+        self.createAnimeCards()
 
 
 """ Search Window Class  """ 
