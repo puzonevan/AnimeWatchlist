@@ -310,8 +310,6 @@ class WatchlistFrame(tk.Frame):
             highlightbackground='#242629'
         )
         rightbutton.place(x=250, y=720)
-        
-
 
     def filterCommand(self): 
         option = self.defaultoption.get()
