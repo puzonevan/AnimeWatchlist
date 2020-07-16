@@ -45,6 +45,7 @@ class AnimeWatchlistUI(tk.Frame):
 
     """ Helper functions for init """
     def databaseCategories(self, dbData): 
+
         for category in dbData.keys(): 
             self.categories.append(category)
 
@@ -109,16 +110,19 @@ class LeftSideBar(tk.Frame):
 
     def addWatchlistTable(self, database): 
         
+        # Create new window
         inputWindow = tk.Toplevel(self)
         inputWindow.geometry("210x80")
         inputWindow.title('Add Watchlist')
         inputWindow.config(bg='#242629')
 
+        # Add Label and text Entry 
         nameLabel = tk.Label(inputWindow, text='Name', fg='#94a1b2', bg='#242629')
         nameEntry= tk.Entry(inputWindow, highlightbackground='#242629')
         nameLabel.place(x=10, y=20)
         nameEntry.place(x=10, y=40)
 
+        # Add button command 
         def addTableToDatabaseAndRefresh(name): 
             if name != '': 
                 database.createTableWatchlist(name)
@@ -135,7 +139,7 @@ class LeftSideBar(tk.Frame):
             categorybutton.grid(row=self.buttonsrow, column=0)
             self.buttonsrow += 1
             
-
+        # Add button 
         addbutton = tk.Button(
             inputWindow, text="Add",
             highlightbackground='#242629',
@@ -265,40 +269,54 @@ class WatchlistFrame(tk.Frame):
             animeCardFrame.destroy()
     
     def leftButtonCommand(self): 
+
+        # Decrement range 
         if self.start >= 16: 
             self.start -= 16
             self.finish -= 16
 
+        # Delete current anime cards and create new ones 
         self.deleteCurrentAnimeCardFrames()
         self.createAnimeCardFrames()
+
+        # Decrement page number
         if self.page > 1: 
             self.page -= 1
             self.pagelabel.config(text=str(self.page))
 
     def rightButtonCommand(self):
+
+        # Increment range 
         self.start += 16
         self.finish += 16
 
+        # Delete current anime cards and create new ones 
         self.deleteCurrentAnimeCardFrames()
         self.createAnimeCardFrames()
+
+        # Increment page number 
         if self.page < (len(self.animeCards)/16):
             self.page += 1
             self.pagelabel.config(text=str(self.page))
 
     def addAnimeCommand(self): 
         
-        """ Initialize new window """
+        # Create new window 
         searchaddanimewindow= tk.Toplevel(self)
         searchaddanimewindow.title('Add Anime')
         searchaddanimewindow.geometry('460x750')
         searchaddanimewindow.config(bg='#242629')
 
+        # Create AddAnimeWindow object for new window
         animewindow = AddAnimeWindow(searchaddanimewindow)
         animewindow.pack()
 
     def filterCommand(self): 
+
+        # Get selected option 
         option = self.defaultoption.get()
         
+        # filter based on option
         if option == 'A-Z': 
             filtereddata = database.filterByAlpha(self.category)
             self.animeCards = database.createAnimeCards(filtereddata, self.category)
@@ -359,14 +377,17 @@ class AnimeCardFrame(tk.Frame):
 
     """ Helper methods for init """
     def createNameSeasonGenre(self): 
+        
         self.name = tk.Message(self, text=self.animecard.name, width=150, fg='#fffffe', bg='#242629')
         self.season = tk.Label(self, text=self.animecard.season, fg='#94a1b2', bg='#242629')
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#94a1b2', bg='#242629')
+
         self.name.grid(row=0, column=0, columnspan=3)
         self.genre.grid(row=1, column=0, columnspan=3)
         self.season.grid(row=2, column=0, columnspan=2)
 
     def createAdditionalFunctionality(self): 
+
         if self.category == 'CurrentSeason': 
             self.addbutton = tk.Button(
                 self, text='Add', 
@@ -396,17 +417,21 @@ class AnimeCardFrame(tk.Frame):
 
     """ Button Commands """
     def addAnime(self, categories, currentcategory, database, animecard): 
+
+        # Create new window 
         addwindow = tk.Toplevel(self)
         addwindow.title('Add to Watchlist')
         addwindow.geometry("200x200")
         addwindow.config(bg='#242629')
 
+        # Label to add to which playlist
         addLabel = tk.Label(
             addwindow, text='Add to:',
             bg='#242629', fg='#94a1b2'
         )
         addLabel.grid(row=0, column=0)
 
+        # add to database method
         def addToDatabase(name, animecard): 
             if name == "Finished": 
                 database.addToFinished(animecard)
@@ -414,6 +439,8 @@ class AnimeCardFrame(tk.Frame):
                 database.addToWatchlist(name, animecard)
             addwindow.destroy()
 
+        # Make each watchlist except current one its own button 
+        # When button is pressed, the anime is added to that watchlist 
         row = 1
         column = 0
         for cat in categories: 
@@ -430,6 +457,7 @@ class AnimeCardFrame(tk.Frame):
                     column += 1
 
     def removeAnime(self, database, category, animecard): 
+
         if category == "Finished": 
             database.removeFromFinished(animecard.name)
         else: 
