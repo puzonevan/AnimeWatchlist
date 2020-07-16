@@ -290,27 +290,11 @@ class WatchlistFrame(tk.Frame):
         """ Initialize new window """
         searchaddanimewindow= tk.Toplevel(self)
         searchaddanimewindow.title('Add Anime')
-        searchaddanimewindow.geometry('400x750')
+        searchaddanimewindow.geometry('460x750')
         searchaddanimewindow.config(bg='#242629')
 
-
-
-        start = 0
-        finish = 5
-        for anime in animeData[start:finish]: 
-            animeframe = AnimeCardSearchFrame(searchaddanimewindow, anime)
-            animeframe.pack(side=tk.TOP, pady=5)
-
-        leftbutton = tk.Button(
-            searchaddanimewindow, text="<<", 
-            highlightbackground='#242629'
-        )
-        leftbutton.place(x=100, y=720)
-        rightbutton = tk.Button(
-            searchaddanimewindow, text=">>", 
-            highlightbackground='#242629'
-        )
-        rightbutton.place(x=250, y=720)
+        animewindow = AddAnimeWindow(searchaddanimewindow)
+        animewindow.pack()
 
     def filterCommand(self): 
         option = self.defaultoption.get()
@@ -453,6 +437,104 @@ class AnimeCardFrame(tk.Frame):
             database.removeFromWatchlist(category, animecard.name)
         self.destroy()
         
+
+""" Add Anime Window Class """
+class AddAnimeWindow(tk.Frame): 
+
+    def __init__(self, parent): 
+
+        """ Initialize Frame """
+        tk.Frame.__init__(self, parent)
+        self.config(bg='#242629')
+
+        """ Instance Variables """
+        # Parameters 
+        self.parent = parent
+
+        # Non Paramters 
+        self.filterarea = None 
+        self.chosenoption = None
+        self.searcharea = None 
+        self.leftrightarea = None 
+        self.animecards = []
+        self.start = 0 
+        self.finish = 5
+
+        """ Filter area """
+        self.createFilterArea()
+
+        """ Search area """ 
+        self.createSearchArea()
+
+        """ Left/Right area """ 
+        self.createLeftRightArea()
+
+        """ Anime Cards """ 
+        self.createAnimeCards()
+
+
+    def createFilterArea(self): 
+    
+        self.filterarea = tk.Frame(self)
+        self.filterarea.grid(row=0,column=0)
+        
+        self.chosenoption = tk.StringVar(self)
+        self.chosenoption.set('A-Z')
+        filteroptions = tk.OptionMenu(
+            self.filterarea, self.chosenoption, 
+            'A-Z', 'Genre', 'Type', 'Season',
+        )
+        filteroptions.config(bg='#242629')
+        filterbutton = tk.Button(
+            self.filterarea, text='Filter',
+            highlightbackground='#242629'
+        )
+        filteroptions.grid(row=0, column=0)
+        filterbutton.grid(row=0, column=1)
+
+    def createSearchArea(self): 
+        
+        self.searcharea = tk.Frame(self)
+        self.searcharea.grid(row=0,column=1)
+
+        animeentry = tk.Entry(
+            self.searcharea, highlightbackground='#242629',
+            width=15,
+        )
+        searchbutton = tk.Button(
+            self.searcharea, text='Search', 
+            highlightbackground='#242629',
+        )
+
+        animeentry.grid(row=0,column=0)
+        searchbutton.grid(row=0,column=1)
+
+    def createLeftRightArea(self):
+
+        self.leftrightarea = tk.Frame(self)
+        self.leftrightarea.grid(row=0,column=2)
+
+        leftbutton = tk.Button(
+            self.leftrightarea, text="<<", 
+            highlightbackground='#242629'
+        )
+        rightbutton = tk.Button(
+            self.leftrightarea, text=">>", 
+            highlightbackground='#242629'
+        )
+
+        leftbutton.grid(row=0, column=0)
+        rightbutton.grid(row=0, column=1)
+
+    def createAnimeCards(self): 
+        self.start = 0
+        self.finish = 5
+        row = 1
+        for anime in animeData[self.start:self.finish]: 
+            animeframe = AnimeCardSearchFrame(self, anime)
+            animeframe.grid(row=row, column=0, columnspan=4)
+            self.animecards.append(animeframe)
+            row += 1 
 
 
 """ Search Window Class  """ 
