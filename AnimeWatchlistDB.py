@@ -100,6 +100,12 @@ class Database():
     def updateWatchlistTable(self): 
         pass
 
+    """ Get Content from tables """ 
+    def getWatchlistTable(self, watchlist): 
+        sql = "SELECT * FROM {}".format(watchlist)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
     """ Add/removes to/from watchlist tables """ 
     def addToWatchlist(self, name, animecard): 
         sql = "INSERT INTO {} (Name, Season, Status, Genre, CurrentEpisode, Picture) VALUES (%s, %s, %s, %s, %s, %s)".format(name)

@@ -193,6 +193,7 @@ class WatchlistFrame(tk.Frame):
         self.updatewatchlistbutton = tk.Button(
             self, text="Update", 
             highlightbackground='#16161a',
+            command=self.updateWatchlistCommand,
         )
         self.updatewatchlistbutton.grid(row=0,column=0)
 
@@ -261,7 +262,7 @@ class WatchlistFrame(tk.Frame):
     """ Button Commands """
     def deleteCurrentAnimeCardFrames(self): 
         for animeCardFrame in self.animeCardFrames:
-            animeCardFrame.destroy
+            animeCardFrame.destroy()
     
     def leftButtonCommand(self): 
         if self.start >= 16: 
@@ -329,6 +330,18 @@ class WatchlistFrame(tk.Frame):
             self.animeCards = database.createAnimeCards(filtereddata, self.category)
             self.deleteCurrentAnimeCardFrames()
             self.createAnimeCardFrames()
+
+    def updateWatchlistCommand(self): 
+        
+        # Update the animecards using the database 
+        self.animeCards = database.createAnimeCards(database.getWatchlistTable(self.category), self.category)
+        
+        # Delete the current anime cards 
+        self.deleteCurrentAnimeCardFrames()
+
+        # Create the new anime cards 
+        self.createAnimeCardFrames()
+
 
 """ Anime Card Class """
 class AnimeCardFrame(tk.Frame): 
