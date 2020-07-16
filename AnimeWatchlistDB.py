@@ -95,11 +95,6 @@ class Database():
         self.cursor.execute(sql, vals)
         self.LOCALSERVER.commit()
 
-    def updateFinishedTable(self): 
-        pass 
-    def updateWatchlistTable(self): 
-        pass
-
     """ Get Content from tables """ 
     def getWatchlistTable(self, watchlist): 
         sql = "SELECT * FROM {}".format(watchlist)
@@ -159,6 +154,11 @@ class Database():
         self.cursor.execute(sql)
         return self.cursor.fetchall()
     
+    def filterByType(self, watchlist): 
+        sql = "SELECT * FROM {} ORDER BY Type".format(watchlist)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
     """ Create Anime Cards """ 
     def createAnimeCards(self, filtereddata, category): 
         output = []
@@ -196,3 +196,12 @@ class AnimeData():
             output.append(filteredanime)
         return output
     
+    def searchAnime(self, name):
+
+        output = [] 
+
+        for anime in self.data: 
+            if name in anime.get('name'): 
+                output.append(anime)
+
+        return output

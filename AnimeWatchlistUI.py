@@ -377,7 +377,7 @@ class AnimeCardFrame(tk.Frame):
 
     """ Helper methods for init """
     def createNameSeasonGenre(self): 
-        
+
         self.name = tk.Message(self, text=self.animecard.name, width=150, fg='#fffffe', bg='#242629')
         self.season = tk.Label(self, text=self.animecard.season, fg='#94a1b2', bg='#242629')
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#94a1b2', bg='#242629')
@@ -570,16 +570,22 @@ class AddAnimeWindow(tk.Frame):
 
     """ Button Commands """ 
     def leftButtonCommand(self): 
+
+        # Increment range 
         self.start += 5
         self.finish += 5
 
+        # Delete current anime cards and create updated ones 
         self.deleteAnimeCards()
         self.createAnimeCards()
 
     def rightButtonCommand(self): 
+
+        # Decrement range
         self.start -= 5 
         self.finish -= 5
         
+        # Delete current anime cards and create updated ones 
         self.deleteAnimeCards()
         self.createAnimeCards()
 
