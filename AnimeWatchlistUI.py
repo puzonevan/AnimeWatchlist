@@ -72,25 +72,25 @@ class LeftSideBar(tk.Frame):
         self.watchlistframes = watchlistframes
         
         # Non-Parameters
-        self.addwatchlistbutton = None
+        self.addremovewatchlistbutton = None
         self.watchlistbuttons = []
         self.buttonsrow = 1
         
         """ AddToWatchlist button """
-        self.createAddWatchlistButton()
+        self.createAddRemoveWatchlistButton()
         
         """ Category buttons """
         self.createWatchlistButtons()
 
     """ Helper functions for init """
-    def createAddWatchlistButton(self): 
-        self.addwatchlistbutton = tk.Button(
-            self, text='Add Watchlist', 
+    def createAddRemoveWatchlistButton(self): 
+        self.addremovewatchlistbutton = tk.Button(
+            self, text='Add/Remove Watchlist', 
             highlightbackground='#242629', 
             pady=10,
             command = lambda: self.addWatchlistTable(database),
         )
-        self.addwatchlistbutton.grid(row=0, column=0)
+        self.addremovewatchlistbutton.grid(row=0, column=0)
 
     def createWatchlistButtons(self): 
         for position in range(len(self.watchlistframes)): 
