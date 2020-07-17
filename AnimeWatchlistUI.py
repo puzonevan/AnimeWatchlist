@@ -347,7 +347,7 @@ class WatchlistFrame(tk.Frame):
         searchaddanimewindow.config(bg='#242629')
 
         # Create AddAnimeWindow object for new window
-        animewindow = AddAnimeWindow(searchaddanimewindow)
+        animewindow = AddAnimeWindow(searchaddanimewindow, self.category)
         animewindow.pack()
 
     def filterCommand(self): 
@@ -514,7 +514,7 @@ class AnimeCardFrame(tk.Frame):
 """ Add Anime Window Class """
 class AddAnimeWindow(tk.Frame): 
 
-    def __init__(self, parent): 
+    def __init__(self, parent, category): 
 
         """ Initialize Frame """
         tk.Frame.__init__(self, parent)
@@ -523,6 +523,7 @@ class AddAnimeWindow(tk.Frame):
         """ Instance Variables """
         # Parameters 
         self.parent = parent
+        self.category = category
 
         # Non Paramters 
         self.filterarea = None 
@@ -606,7 +607,7 @@ class AddAnimeWindow(tk.Frame):
     def createAnimeCards(self): 
         row = 1
         for anime in self.animelist[self.start:self.finish]: 
-            animeframe = AnimeCardSearchFrame(self, anime)
+            animeframe = AnimeCardSearchFrame(self, anime, self.category)
             animeframe.grid(row=row, column=0, columnspan=4)
             self.animecards.append(animeframe)
             row += 1 
@@ -671,7 +672,7 @@ class AddAnimeWindow(tk.Frame):
 class AnimeCardSearchFrame(tk.Frame): 
 
     """ Constructor """
-    def __init__(self, parent, anime): 
+    def __init__(self, parent, anime, category): 
         
         """ Initialize Frame """
         tk.Frame.__init__(self, parent)
@@ -683,6 +684,7 @@ class AnimeCardSearchFrame(tk.Frame):
         # Parameters 
         self.parent = parent
         self.anime = anime
+        self.category = category 
 
         # Non-Parameters 
         self.name = None 
@@ -765,9 +767,27 @@ class AnimeCardSearchFrame(tk.Frame):
         self.addbutton = tk.Button(
             self, text='Add Anime', 
             highlightbackground='#16161a',
+            command=self.addAnimeCommand,
         )
         self.addbutton.grid(row=3, column=2)
 
+    """ Button Commands """ 
+    def addAnimeCommand(self): 
+        
+        # create animecard from anime 
+        animecard = formatanime(self.anime)
+
+        
+
     def linkCommand(self): 
+
+        # Open browser and go to link
         browser = webdriver.Chrome()
         browser.get(self.anime.get('source'))
+
+    def formatanime(self): 
+        if self.category == 'Finished': 
+            pass
+        else: 
+            pass
+        return None 

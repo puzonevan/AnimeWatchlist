@@ -164,6 +164,9 @@ class Database():
         return self.cursor.fetchall()
 
     """ Create Anime Cards """ 
+    def createAnimeCard(self, anime, category): 
+        return AnimeCard.AnimeCard(anime, category)
+
     def createAnimeCards(self, filtereddata, category): 
         output = []
         for anime in filtereddata: 
@@ -197,6 +200,7 @@ class AnimeData():
             filteredanime['synonyms'] = anime.get('synonyms')
             filteredanime['season'] = "{} {}".format(anime.get('animeSeason').get('season'), anime.get('animeSeason').get('year'))
             filteredanime['source'] = anime.get('sources')[0]
+            filteredanime['pictureurl'] = anime.get('picture')
 
             output.append(filteredanime)
         return output
