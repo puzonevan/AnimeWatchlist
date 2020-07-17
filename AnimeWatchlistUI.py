@@ -9,6 +9,7 @@ database = None
 dbData = None
 animeData = None 
 
+
 """ Main Window Class """
 class AnimeWatchlistUI(tk.Frame): 
 
@@ -434,7 +435,8 @@ class AnimeCardFrame(tk.Frame):
             )
             self.linkbutton = tk.Button(
                 self, text='Click here for source', 
-                highlightbackground='#242629'
+                highlightbackground='#242629', 
+                command=self.linkCommand,
             )
             self.addbutton.grid(row=2, column=2)
             self.linkbutton.grid(row=3, column=0, columnspan=3)
@@ -501,7 +503,11 @@ class AnimeCardFrame(tk.Frame):
         else: 
             database.removeFromWatchlist(category, animecard.name)
         self.destroy()
-        
+    
+    def linkCommand(self): 
+        browser = webdriver.Chrome()
+        browser.get(self.animecard.source)
+
 
 
 """ Add Anime Window Class """
