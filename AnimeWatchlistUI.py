@@ -73,6 +73,7 @@ class LeftSideBar(tk.Frame):
         
         # Non-Parameters
         self.addremovewatchlistbutton = None
+        self.addremoveframe = None
         self.watchlistbuttons = []
         self.buttonsrow = 1
         
@@ -88,7 +89,7 @@ class LeftSideBar(tk.Frame):
             self, text='Add/Remove', 
             highlightbackground='#242629', 
             pady=10,
-            command = lambda: self.addWatchlistTable(database),
+            command = lambda: self.addRemoveWatchlistTable(database),
         )
         self.addremovewatchlistbutton.grid(row=0, column=0)
 
@@ -116,59 +117,57 @@ class LeftSideBar(tk.Frame):
     def raiseFrame(self, frame): 
         frame.tkraise()
 
-    def addWatchlistTable(self, database): 
+    def addRemoveWatchlistTable(self, database): 
         
         # Create new window
-        inputWindow = tk.Toplevel(self)
-        inputWindow.geometry("220x110")
-        inputWindow.title('Add Watchlist')
-        inputWindow.config(bg='#242629')
+        self.addremoveframe = tk.Toplevel(self)
+        self.addremoveframe.geometry("220x110")
+        self.addremoveframe.title('Add Watchlist')
+        self.addremoveframe.config(bg='#242629')
 
         # Add Label and text Entry 
-        nameLabel = tk.Label(inputWindow, text='Name', fg='#94a1b2', bg='#242629')
-        nameEntry= tk.Entry(inputWindow, highlightbackground='#242629')
+        nameLabel = tk.Label(self.addremoveframe, text='Name', fg='#94a1b2', bg='#242629')
+        nameEntry= tk.Entry(self.addremoveframe, highlightbackground='#242629')
         nameLabel.place(x=10, y=20)
         nameEntry.place(x=10, y=40)
 
-        # Add button command 
-        def addTableToDatabaseAndRefresh(name): 
-            if name != '': 
-                database.createTableWatchlist(name)
-                inputWindow.destroy()
-            
-
-            categorybutton = tk.Button(
-                self, text=name, 
-                highlightbackground='#242629', 
-                pady=5, 
-            )
-
-            self.watchlistbuttons.append(categorybutton)
-            categorybutton.grid(row=self.buttonsrow, column=0)
-            self.buttonsrow += 1
-            
-        def removeTableFromDatabaseAndRefresh(name): 
-
-            # if name != '': 
-            #     database.destroyTable(name)
-            #     inputWindow.destroy()
-
-            self.deleteWatchlistButtons
-
-
         # Add button 
         addbutton = tk.Button(
-            inputWindow, text="Add",
+            self.addremoveframe, text="Add",
             highlightbackground='#242629',
-            command= lambda: addTableToDatabaseAndRefresh(nameEntry.get()),
+            command= lambda: self.addTableAndRefresh(nameEntry.get()),
         )
         removebutton = tk.Button(
-            inputWindow, text="Remove",
+            self.addremoveframe, text="Remove",
             highlightbackground='#242629',
-            command= lambda: removeTableFromDatabaseAndRefresh(nameEntry.get()),
+            command= lambda: self.removeTableAndRefresh(nameEntry.get()),
         )
         addbutton.place(x=90, y=70)
         removebutton.place(x=10, y=70)
+
+    def addTableAndRefresh(self, name): 
+        if name != '': 
+            database.createTableWatchlist(name)
+            self.addremoveframe.destroy()
+        
+
+        categorybutton = tk.Button(
+            self, text=name, 
+            highlightbackground='#242629', 
+            pady=5, 
+        )
+
+        self.watchlistbuttons.append(categorybutton)
+        categorybutton.grid(row=self.buttonsrow, column=0)
+        self.buttonsrow += 1
+
+    def removeTableAndRefresh(self, name): 
+
+            # if name != '': 
+            #     database.destroyTable(name)
+            #       self.addremoveframe.destroy()
+
+            self.deleteWatchlistButtons()
 
 """ Watchlist Class """
 class WatchlistFrame(tk.Frame):
