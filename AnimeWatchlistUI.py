@@ -775,8 +775,12 @@ class AnimeCardSearchFrame(tk.Frame):
     def addAnimeCommand(self): 
         
         # create animecard from anime 
-        animecard = formatanime(self.anime)
+        animecard = database.createAnimeCard(self.formatanime(), self.category)
 
+        if self.category == 'Finished': 
+            database.addToFinished(animecard)
+        else: 
+            database.addToWatchlist(self.category, animecard)
         
 
     def linkCommand(self): 
@@ -786,8 +790,19 @@ class AnimeCardSearchFrame(tk.Frame):
         browser.get(self.anime.get('source'))
 
     def formatanime(self): 
+        output = [] 
         if self.category == 'Finished': 
-            pass
+            output.append(0)
+            output.append(self.anime.get('name'))
+            output.append(self.anime.get('season'))
+            output.append(self.anime.get('genres')[0])
+            output.append(self.anime.get('pictureurl'))
         else: 
-            pass
-        return None 
+            output.append(0)
+            output.append(self.anime.get('name'))
+            output.append(self.anime.get('season'))
+            output.append(self.anime.get('status'))
+            output.append(self.anime.get('genres')[0])
+            output.append(1)
+            output.append(self.anime.get('pictureurl'))
+        return output
