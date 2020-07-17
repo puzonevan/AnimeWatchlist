@@ -510,6 +510,7 @@ class AnimeCardFrame(tk.Frame):
 
 
 
+
 """ Add Anime Window Class """
 class AddAnimeWindow(tk.Frame): 
 
@@ -757,6 +758,7 @@ class AnimeCardSearchFrame(tk.Frame):
         self.linkbutton = tk.Button(
             self, text="Click for source",
             highlightbackground='#16161a',
+            command=self.linkCommand,
         )
         self.linkbutton.grid(row=3, column=0, columnspan=2)
 
@@ -765,3 +767,7 @@ class AnimeCardSearchFrame(tk.Frame):
             highlightbackground='#16161a',
         )
         self.addbutton.grid(row=3, column=2)
+
+    def linkCommand(self): 
+        browser = webdriver.Chrome()
+        browser.get(self.anime.get('source'))
