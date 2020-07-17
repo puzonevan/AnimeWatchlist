@@ -1,5 +1,6 @@
 import tkinter as tk 
 import mysql.connector
+from selenium import webdriver
 # Debug 
 import pprint, time
 
@@ -180,11 +181,7 @@ class LeftSideBar(tk.Frame):
                         button.destroy()
                 
                 # Destroy window 
-                self.addremoveframe.destroy()
-                        
-
-
-            
+                self.addremoveframe.destroy()                    
 
 """ Watchlist Class """
 class WatchlistFrame(tk.Frame):
