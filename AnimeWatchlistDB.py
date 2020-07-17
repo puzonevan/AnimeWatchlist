@@ -54,8 +54,9 @@ class Database():
         self.cursor.execute(sql)
 
     def destroyTable(self, name): 
-        pass
-    
+        sql = "DROP TABLE IF EXISTS {}".format(name)
+        self.cursor.execute(sql)
+
     """ Update table methods """
     def updateCurrentSeasonTable(self, animeData): 
 
