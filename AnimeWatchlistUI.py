@@ -105,14 +105,6 @@ class LeftSideBar(tk.Frame):
             self.buttonsrow += 1
             self.watchlistbuttons.append(button)
 
-    def deleteWatchlistButtons(self): 
-        pprint.pprint(self.watchlistbuttons)
-        for button in self.watchlistbuttons: 
-            if button['text'] == 'CurrentSeason' or button['text'] == 'Finished': 
-                print('continued')
-                continue
-            # button.destroy()
-
     """ Button Commands """
     def raiseFrame(self, frame): 
         frame.tkraise()
@@ -175,15 +167,24 @@ class LeftSideBar(tk.Frame):
             self.addremoveframe.destroy()
         
 
-    
-
     def removeTableAndRefresh(self, name): 
 
-            # if name != '': 
-            #     database.destroyTable(name)
-            #       self.addremoveframe.destroy()
+            # Condition to not destroy current season and finished 
+            if name != 'CurrentSeason' and name != 'Finished': 
+                # Remove table from database 
+                database.destroyTable(name)
 
-            self.deleteWatchlistButtons()
+                # Loop through buttons till matching name and destroy 
+                for button in self.watchlistbuttons:
+                    if button['text'] == name: 
+                        button.destroy()
+                
+                # Destroy window 
+                self.addremoveframe.destroy()
+                        
+
+
+            
 
 """ Watchlist Class """
 class WatchlistFrame(tk.Frame):
