@@ -201,12 +201,3 @@ class AnimeData():
             output.append(filteredanime)
         return output
     
-    def searchAnime(self, name):
-
-        output = [] 
-
-        for anime in self.data: 
-            if name in anime.get('name'): 
-                output.append(anime)
-
-        return output
