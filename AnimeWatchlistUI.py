@@ -85,7 +85,7 @@ class LeftSideBar(tk.Frame):
     """ Helper functions for init """
     def createAddRemoveWatchlistButton(self): 
         self.addremovewatchlistbutton = tk.Button(
-            self, text='Add/Remove Watchlist', 
+            self, text='Add/Remove', 
             highlightbackground='#242629', 
             pady=10,
             command = lambda: self.addWatchlistTable(database),
