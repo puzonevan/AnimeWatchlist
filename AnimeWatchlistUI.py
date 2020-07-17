@@ -146,20 +146,36 @@ class LeftSideBar(tk.Frame):
         removebutton.place(x=10, y=70)
 
     def addTableAndRefresh(self, name): 
+
         if name != '': 
+            # Create table in database 
             database.createTableWatchlist(name)
+
+            # Update categories 
+            self.categories.append(name)
+
+            # Refresh dbData 
+            dbData = database.loadDatabase()
+
+            # Update watchlist frames
+            self.watchlistframes.append(WatchlistFrame(self.parent, self.categories, name, dbData.get(name)))
+
+            # Add new watchlist button
+            categorybutton = tk.Button(
+                self, text=name, 
+                highlightbackground='#242629', 
+                pady=5, 
+            )
+            self.watchlistbuttons.append(categorybutton)
+
+            # Add button to end of row 
+            categorybutton.grid(row=self.buttonsrow, column=0)
+
+            # Destroy window 
             self.addremoveframe.destroy()
         
 
-        categorybutton = tk.Button(
-            self, text=name, 
-            highlightbackground='#242629', 
-            pady=5, 
-        )
-
-        self.watchlistbuttons.append(categorybutton)
-        categorybutton.grid(row=self.buttonsrow, column=0)
-        self.buttonsrow += 1
+    
 
     def removeTableAndRefresh(self, name): 
 
