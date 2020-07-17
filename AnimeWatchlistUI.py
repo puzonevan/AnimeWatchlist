@@ -112,7 +112,7 @@ class LeftSideBar(tk.Frame):
         
         # Create new window
         inputWindow = tk.Toplevel(self)
-        inputWindow.geometry("210x80")
+        inputWindow.geometry("220x110")
         inputWindow.title('Add Watchlist')
         inputWindow.config(bg='#242629')
 
@@ -139,13 +139,21 @@ class LeftSideBar(tk.Frame):
             categorybutton.grid(row=self.buttonsrow, column=0)
             self.buttonsrow += 1
             
+        def removeTableFromDatabaseAndRefresh(name): 
+            pass
         # Add button 
         addbutton = tk.Button(
             inputWindow, text="Add",
             highlightbackground='#242629',
             command= lambda: addTableToDatabaseAndRefresh(nameEntry.get()),
         )
-        addbutton.place(x=150, y=40)
+        removebutton = tk.Button(
+            inputWindow, text="Remove",
+            highlightbackground='#242629',
+            command= lambda: removeTableFromDatabaseAndRefresh(nameEntry.get()),
+        )
+        addbutton.place(x=90, y=70)
+        removebutton.place(x=10, y=70)
 
 """ Watchlist Class """
 class WatchlistFrame(tk.Frame):

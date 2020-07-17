@@ -53,6 +53,9 @@ class Database():
         sql = "CREATE TABLE {} (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), CurrentEpisode TINYINT, Picture VARCHAR(255))".format(name)
         self.cursor.execute(sql)
 
+    def destroyTable(self, name): 
+        pass
+    
     """ Update table methods """
     def updateCurrentSeasonTable(self, animeData): 
 
