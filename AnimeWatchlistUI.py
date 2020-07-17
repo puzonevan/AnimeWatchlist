@@ -560,7 +560,6 @@ class AddAnimeWindow(tk.Frame):
 
     def createAnimeCards(self): 
         row = 1
-        pprint.pprint(self.animelist[self.start:self.finish])
         for anime in self.animelist[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime)
             animeframe.grid(row=row, column=0, columnspan=4)
@@ -598,16 +597,27 @@ class AddAnimeWindow(tk.Frame):
 
     def searchCommand(self, entry):
         
+        # Empty entry: show original animedata
         if entry == '': 
             self.animelist = animeData
             self.deleteAnimeCards()
             self.createAnimeCards() 
+        # Non-empty entry: search
         else: 
             searchresults = []
             for anime in animeData: 
+                
+                # check if entry is in the anime name
                 if entry in anime.get('name'): 
                     searchresults.append(anime)
-            
+                    continue
+                
+                # check if entry is in one of the synonyms 
+                for synonym in anime.get('synonyms'): 
+                    if entry in synonym: 
+                        searchresults.append(anime)
+                        break
+
             self.animelist = searchresults 
             self.deleteAnimeCards() 
             self.createAnimeCards()
