@@ -560,6 +560,7 @@ class AddAnimeWindow(tk.Frame):
 
     def createAnimeCards(self): 
         row = 1
+        pprint.pprint(self.animelist[self.start:self.finish])
         for anime in self.animelist[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime)
             animeframe.grid(row=row, column=0, columnspan=4)
@@ -574,8 +575,8 @@ class AddAnimeWindow(tk.Frame):
     def leftButtonCommand(self): 
 
         # Increment range 
-        self.start += 5
-        self.finish += 5
+        self.start -= 5
+        self.finish -= 5
 
         # Delete current anime cards and create updated ones 
         self.deleteAnimeCards()
@@ -584,8 +585,8 @@ class AddAnimeWindow(tk.Frame):
     def rightButtonCommand(self): 
 
         # Decrement range
-        self.start -= 5 
-        self.finish -= 5
+        self.start += 5 
+        self.finish += 5
         
         # Delete current anime cards and create updated ones 
         self.deleteAnimeCards()
