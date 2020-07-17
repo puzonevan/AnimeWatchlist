@@ -1,7 +1,7 @@
 import tkinter as tk 
 import mysql.connector
 # Debug 
-# import pprint, time
+import pprint, time
 
 """ Global Variables """
 database = None 
@@ -484,6 +484,7 @@ class AddAnimeWindow(tk.Frame):
         self.chosenoption = None
         self.searcharea = None 
         self.leftrightarea = None 
+        self.animelist = animeData
         self.animecards = []
         self.start = 0 
         self.finish = 5
@@ -532,6 +533,7 @@ class AddAnimeWindow(tk.Frame):
         searchbutton = tk.Button(
             self.searcharea, text='Search', 
             highlightbackground='#242629',
+            command=lambda: self.searchCommand(animeentry.get()),
         )
 
         animeentry.grid(row=0,column=0)
@@ -558,7 +560,7 @@ class AddAnimeWindow(tk.Frame):
 
     def createAnimeCards(self): 
         row = 1
-        for anime in animeData[self.start:self.finish]: 
+        for anime in self.animelist[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime)
             animeframe.grid(row=row, column=0, columnspan=4)
             self.animecards.append(animeframe)
@@ -589,6 +591,21 @@ class AddAnimeWindow(tk.Frame):
         self.deleteAnimeCards()
         self.createAnimeCards()
 
+    def searchCommand(self, entry):
+        
+        if entry == '': 
+            self.animelist = animeData
+            self.deleteAnimeCards()
+            self.createAnimeCards() 
+        else: 
+            searchresults = []
+            for anime in animeData: 
+                if entry in anime.get('name'): 
+                    searchresults.append(anime)
+            
+            self.animelist = searchresults 
+            self.deleteAnimeCards() 
+            self.createAnimeCards()
 
 """ Search Window Class  """ 
 class AnimeCardSearchFrame(tk.Frame): 
