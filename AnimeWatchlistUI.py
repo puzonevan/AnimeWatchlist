@@ -575,8 +575,9 @@ class AddAnimeWindow(tk.Frame):
     def leftButtonCommand(self): 
 
         # Increment range 
-        self.start -= 5
-        self.finish -= 5
+        if self.start >= 5: 
+            self.start -= 5
+            self.finish -= 5
 
         # Delete current anime cards and create updated ones 
         self.deleteAnimeCards()
@@ -584,6 +585,9 @@ class AddAnimeWindow(tk.Frame):
 
     def rightButtonCommand(self): 
 
+        if self.finish > len(self.animelist): 
+            return 
+            
         # Decrement range
         self.start += 5 
         self.finish += 5
