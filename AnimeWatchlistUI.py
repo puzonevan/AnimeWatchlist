@@ -287,6 +287,8 @@ class WatchlistFrame(tk.Frame):
     def rightButtonCommand(self):
 
         # Increment range 
+        if self.finish > len(self.animeCardFrames): 
+            return 
         self.start += 16
         self.finish += 16
 
