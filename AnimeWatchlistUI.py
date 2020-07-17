@@ -129,6 +129,7 @@ class LeftSideBar(tk.Frame):
             highlightbackground='#242629',
             command= lambda: self.addTableAndRefresh(nameEntry.get()),
         )
+        # Remove button 
         removebutton = tk.Button(
             self.addremoveframe, text="Remove",
             highlightbackground='#242629',
@@ -166,7 +167,6 @@ class LeftSideBar(tk.Frame):
             # Destroy window 
             self.addremoveframe.destroy()
         
-
     def removeTableAndRefresh(self, name): 
 
             # Condition to not destroy current season and finished 
