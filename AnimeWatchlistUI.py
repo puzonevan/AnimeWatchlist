@@ -2,7 +2,7 @@ import tkinter as tk
 import mysql.connector
 from selenium import webdriver
 # Debug 
-import pprint, time
+# import pprint, time
 
 """ Global Variables """
 database = None 
@@ -587,7 +587,7 @@ class AddAnimeWindow(tk.Frame):
         row = 1
         for anime in self.animelist[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime, self.category)
-            animeframe.grid(row=row, column=0, columnspan=4, sticky='nsew')
+            animeframe.grid(row=row, column=0, columnspan=4, sticky='nsew', pady=2)
             self.animecards.append(animeframe)
             row += 1 
 
