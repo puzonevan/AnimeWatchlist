@@ -174,8 +174,6 @@ class Database():
         return output
 
 
-  
-    
 class AnimeData(): 
 
     """ Constructor """ 

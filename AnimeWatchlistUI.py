@@ -153,18 +153,21 @@ class LeftSideBar(tk.Frame):
             dbData = database.loadDatabase()
 
             # Update watchlist frames
-            self.watchlistframes.append(WatchlistFrame(self.parent, self.categories, name, dbData.get(name)))
+            newwatchlistframe = WatchlistFrame(self.parent, self.categories, name, dbData.get(name))
+            self.watchlistframes.append(newwatchlistframe)
 
             # Add new watchlist button
             categorybutton = tk.Button(
                 self, text=name, 
                 highlightbackground='#242629', 
                 pady=5, 
+                command=lambda newwatchlistframe=newwatchlistframe: self.raiseFrame(newwatchlistframe),
             )
             self.watchlistbuttons.append(categorybutton)
 
             # Add button to end of row 
             categorybutton.grid(row=self.buttonsrow, column=0)
+            self.buttonsrow += 1
 
             # Destroy window 
             self.addremoveframe.destroy()
@@ -180,6 +183,7 @@ class LeftSideBar(tk.Frame):
                 for button in self.watchlistbuttons:
                     if button['text'] == name: 
                         button.destroy()
+                        self.watchlistbuttons.remove(button)
                 
                 # Destroy window 
                 self.addremoveframe.destroy()                    
@@ -510,7 +514,6 @@ class AnimeCardFrame(tk.Frame):
 
 
 
-
 """ Add Anime Window Class """
 class AddAnimeWindow(tk.Frame): 
 
@@ -526,17 +529,12 @@ class AddAnimeWindow(tk.Frame):
         self.category = category
 
         # Non Paramters 
-        self.filterarea = None 
-        self.chosenoption = None
         self.searcharea = None 
         self.leftrightarea = None 
         self.animelist = animeData
         self.animecards = []
         self.start = 0 
         self.finish = 5
-
-        """ Filter area """
-        self.createFilterArea()
 
         """ Search area """ 
         self.createSearchArea()
@@ -548,29 +546,10 @@ class AddAnimeWindow(tk.Frame):
         self.createAnimeCards()
 
     """ Helper functions for init """ 
-    def createFilterArea(self): 
-    
-        self.filterarea = tk.Frame(self)
-        self.filterarea.grid(row=0,column=0)
-        
-        self.chosenoption = tk.StringVar(self)
-        self.chosenoption.set('A-Z')
-        filteroptions = tk.OptionMenu(
-            self.filterarea, self.chosenoption, 
-            'A-Z', 'Genre', 'Type', 'Season',
-        )
-        filteroptions.config(bg='#242629')
-        filterbutton = tk.Button(
-            self.filterarea, text='Filter',
-            highlightbackground='#242629'
-        )
-        filteroptions.grid(row=0, column=0)
-        filterbutton.grid(row=0, column=1)
-
     def createSearchArea(self): 
         
         self.searcharea = tk.Frame(self)
-        self.searcharea.grid(row=0,column=1)
+        self.searcharea.grid(row=0,column=0)
 
         animeentry = tk.Entry(
             self.searcharea, highlightbackground='#242629',
@@ -588,7 +567,7 @@ class AddAnimeWindow(tk.Frame):
     def createLeftRightArea(self):
 
         self.leftrightarea = tk.Frame(self)
-        self.leftrightarea.grid(row=0,column=2)
+        self.leftrightarea.grid(row=0,column=1)
 
         leftbutton = tk.Button(
             self.leftrightarea, text="<<", 
@@ -608,7 +587,7 @@ class AddAnimeWindow(tk.Frame):
         row = 1
         for anime in self.animelist[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime, self.category)
-            animeframe.grid(row=row, column=0, columnspan=4)
+            animeframe.grid(row=row, column=0, columnspan=4, sticky='nsew')
             self.animecards.append(animeframe)
             row += 1 
 
@@ -677,7 +656,7 @@ class AnimeCardSearchFrame(tk.Frame):
         """ Initialize Frame """
         tk.Frame.__init__(self, parent)
         self.config(bg='#16161a')
-        self.config(width=400, padx=10, pady=10)
+        self.config(padx=10, pady=10, width=350)
         
 
         """ Instance Variables """ 
@@ -782,13 +761,13 @@ class AnimeCardSearchFrame(tk.Frame):
         else: 
             database.addToWatchlist(self.category, animecard)
         
-
     def linkCommand(self): 
 
         # Open browser and go to link
         browser = webdriver.Chrome()
         browser.get(self.anime.get('source'))
 
+    """ format anime data to list for animecard """
     def formatanime(self): 
         output = [] 
         if self.category == 'Finished': 
