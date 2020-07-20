@@ -31,6 +31,7 @@ class AnimeCard():
             self.status = data[3]
             self.genre = data[4]
             self.source = data[5]
+            self.pictureurl = data[6]
         elif category == 'Finished': 
             self.name = data[1]
             self.season = data[2]

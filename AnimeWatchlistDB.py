@@ -101,7 +101,7 @@ class Database():
             animecard.status, 
             animecard.genre, 
             animecard.currentep, 
-            animecard.pictureurl
+            animecard.pictureurl,
         )
         self.cursor.execute(sql, vals)
         self.LOCALSERVER.commit()
