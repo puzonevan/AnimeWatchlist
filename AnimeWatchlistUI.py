@@ -439,9 +439,9 @@ class AnimeCardFrame(tk.Frame):
 
     def createNameSeasonGenre(self): 
 
-        self.name = tk.Message(self, text=self.animecard.name, width=150, fg='#fffffe', bg='#242629')
-        self.season = tk.Label(self, text=self.animecard.season, fg='#94a1b2', bg='#242629')
-        self.genre = tk.Label(self, text=self.animecard.genre, fg='#94a1b2', bg='#242629')
+        self.name = tk.Message(self, text=self.animecard.name, width=170, fg='#fffffe', bg='#242629')
+        self.season = tk.Label(self, text=self.animecard.season, fg='#7f5af0', bg='#242629')
+        self.genre = tk.Label(self, text=self.animecard.genre, fg='#7f5af0', bg='#242629')
 
         if self.category == 'CurrentSeason': 
             self.name.grid(row=0, column=0, columnspan=3)
