@@ -443,9 +443,13 @@ class AnimeCardFrame(tk.Frame):
         self.season = tk.Label(self, text=self.animecard.season, fg='#94a1b2', bg='#242629')
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#94a1b2', bg='#242629')
 
-        self.name.grid(row=1, column=0, columnspan=3)
-        self.genre.grid(row=2, column=0, columnspan=3)
-        self.season.grid(row=3, column=0, columnspan=2)
+        if self.category == 'CurrentSeason': 
+            self.name.grid(row=0, column=0, columnspan=3)
+            self.genre.grid(row=1, column=0, columnspan=2)
+        else: 
+            self.name.grid(row=1, column=0, columnspan=3)
+            self.genre.grid(row=2, column=0)
+            self.season.grid(row=3, column=0, columnspan=3)
 
     def createAdditionalFunctionality(self): 
 
@@ -460,8 +464,8 @@ class AnimeCardFrame(tk.Frame):
                 highlightbackground='#242629', 
                 command=self.linkCommand,
             )
-            self.addbutton.grid(row=2, column=2)
-            self.linkbutton.grid(row=3, column=0, columnspan=3)
+            self.addbutton.grid(row=1, column=2)
+            self.linkbutton.grid(row=2, column=0, columnspan=3)
         elif self.category == 'Finished': 
             self.removebutton = tk.Button(
                 self, text='Remove', 
