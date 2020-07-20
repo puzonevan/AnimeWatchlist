@@ -44,7 +44,7 @@ class Database():
         
         return output
 
-    """ Table creation methods - create given tables in database """
+    """ Table creation/destroy methods - create given tables in database """
     def createTableCurrentSeason(self): 
         self.cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Source VARCHAR(255))")
     def createTableFinished(self): 

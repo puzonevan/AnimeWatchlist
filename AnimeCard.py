@@ -8,6 +8,11 @@
     Genre: “tags” in json data 
     Current Episode: 1
 """
+
+from PIL import Image, ImageTk
+from io import BytesIO
+import requests, json 
+
 class AnimeCard(): 
 
     def __init__(self, data, category): 
@@ -38,6 +43,21 @@ class AnimeCard():
             self.genre = data[4]
             self.currentep = data[5]
             self.pictureurl = data[6]
+
+    def convertPictureUrl(self):
+        
+        if self.pictureurl == '': 
+            return 
+
+        imagerequest = requests.get(self.pictureurl)
+        imagedata = imagerequest.content
+        convertimg = Image.open(BytesIO(imagedata))
+        convertimg = convertimg.resize((100, 150), Image.ANTIALIAS)
+        image = ImageTk.PhotoImage(convertimg)
+
+        return image
+
+        
             
     def __str__(self): 
         return "{} | {} | {}".format(self.name, self.season, self.genre)

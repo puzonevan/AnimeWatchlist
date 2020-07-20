@@ -1,6 +1,7 @@
 import tkinter as tk 
 import mysql.connector
 from selenium import webdriver
+from PIL import Image, ImageTk
 # Debug 
 # import pprint, time
 
@@ -405,12 +406,16 @@ class AnimeCardFrame(tk.Frame):
         self.animecard = animecard
 
         # Non-Parameters 
+        self.picture = None
         self.name = None 
         self.season = None 
         self.genre = None 
         self.addbutton = None 
         self.removebutton = None 
         self.linkbutton = None 
+
+        """ Picture """
+        self.createPicture()
 
         """ Name/Season/Genre """
         self.createNameSeasonGenre()
@@ -419,15 +424,25 @@ class AnimeCardFrame(tk.Frame):
         self.createAdditionalFunctionality()
 
     """ Helper methods for init """
+    def createPicture(self): 
+
+        if self.category == 'CurrentSeason': 
+            return 
+
+        image = self.animecard.convertPictureUrl()
+        self.picture = tk.Label(self, image=image)
+        self.picture.photo = image
+        self.picture.grid(row=0,column=0, columnspan=3)
+
     def createNameSeasonGenre(self): 
 
         self.name = tk.Message(self, text=self.animecard.name, width=150, fg='#fffffe', bg='#242629')
         self.season = tk.Label(self, text=self.animecard.season, fg='#94a1b2', bg='#242629')
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#94a1b2', bg='#242629')
 
-        self.name.grid(row=0, column=0, columnspan=3)
-        self.genre.grid(row=1, column=0, columnspan=3)
-        self.season.grid(row=2, column=0, columnspan=2)
+        self.name.grid(row=1, column=0, columnspan=3)
+        self.genre.grid(row=2, column=0, columnspan=3)
+        self.season.grid(row=3, column=0, columnspan=2)
 
     def createAdditionalFunctionality(self): 
 
