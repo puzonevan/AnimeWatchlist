@@ -27,6 +27,9 @@ def main():
     tk.Grid.columnconfigure(root, 0, weight=0)
     tk.Grid.columnconfigure(root, 1, weight=1)
 
+    mainpage.database = database 
+    mainpage.dbData = database.loadDatabase()
+    mainpage.animeData = animeData
     mainpage.AnimeWatchlistUI(root, database, database.loadDatabase(), animeData)
 
     root.mainloop()

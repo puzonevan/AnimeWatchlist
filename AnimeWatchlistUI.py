@@ -1,7 +1,6 @@
 import tkinter as tk 
 import mysql.connector
 from selenium import webdriver
-from PIL import Image, ImageTk
 # Debug 
 # import pprint, time
 
@@ -28,6 +27,7 @@ class AnimeWatchlistUI(tk.Frame):
         dbData = dbDatas
         global animeData
         animeData = animeDatas
+        
 
         """ Instance Variables """ 
         # Non-Parameters
@@ -379,6 +379,9 @@ class WatchlistFrame(tk.Frame):
 
     def updateWatchlistCommand(self): 
         
+        if self.category == 'CurrentSeason': 
+            database.updateCurrentSeasonTable(animeData)
+
         # Update the animecards using the database 
         self.animeCards = database.createAnimeCards(database.getWatchlistTable(self.category), self.category)
         

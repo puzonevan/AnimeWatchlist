@@ -46,7 +46,7 @@ class Database():
 
     """ Table creation/destroy methods - create given tables in database """
     def createTableCurrentSeason(self): 
-        self.cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Source VARCHAR(255))")
+        self.cursor.execute("CREATE TABLE CurrentSeason (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Status VARCHAR(255), Genre VARCHAR(255), Source VARCHAR(255), Picture VARCHAR(255))")
     def createTableFinished(self): 
         self.cursor.execute("CREATE TABLE Finished (id INT AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(255), Season VARCHAR(255), Genre VARCHAR(255), Picture VARCHAR(255))")
     def createTableWatchlist(self, name): 
@@ -67,37 +67,24 @@ class Database():
         self.createTableCurrentSeason()
 
         # Filter method based on season and year
-        def filterCurrentSeason(animeData): 
-            output = []
-            for anime in animeData: 
-                if anime.get('animeSeason').get('season') == SEASON and str(anime.get('animeSeason').get('year')) == YEAR:
-                    output.append(anime)
-            return output 
-        filteredanime = filterCurrentSeason(animeData)
+        filteredanime = [] 
+        for anime in animeData: 
+            if anime.get('season') == "{} {}".format(SEASON, YEAR): 
+                filteredanime.append(anime)
 
         # Add each anime from the filtered data to the table
         for anime in filteredanime: 
-            title = ' '
-            genre = ' '
-            if 'synonym' in anime.keys(): 
-                title = anime.get('synonym')[0]
-            else: 
-                title = anime.get('title')
-
-            if 'tags' in anime.keys() and len(anime.get('tags')) > 0: 
-                genre = anime.get('tags')[0]
-
-            season = anime.get('animeSeason').get('season') + ' ' + str(anime.get('animeSeason').get('year'))
-            sql = "INSERT INTO CurrentSeason (Name, Season, Status, Genre, Source) VALUES (%s, %s, %s, %s, %s)"
+            sql = "INSERT INTO CurrentSeason (Name, Season, Status, Genre, Source, Picture) VALUES (%s, %s, %s, %s, %s, %s)"
             vals = (
-                title,
-                season, 
+                anime.get('name'),
+                anime.get('season'), 
                 anime.get('status'), 
-                genre,
-                anime.get('sources')[0]
+                anime.get('genres')[0],
+                anime.get('source'),
+                anime.get('pictureurl'),
             )
-        self.cursor.execute(sql, vals)
-        self.LOCALSERVER.commit()
+            self.cursor.execute(sql, vals)
+            self.LOCALSERVER.commit()
 
     """ Get Content from tables """ 
     def getWatchlistTable(self, watchlist): 
