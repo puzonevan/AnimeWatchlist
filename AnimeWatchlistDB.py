@@ -113,7 +113,7 @@ class Database():
         self.LOCALSERVER.commit()
 
     def addToFinished(self, animecard): 
-        sql = "INSERT INTO Finished (Name, Season, Genre, Picture) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT IGNORE INTO Finished (Name, Season, Genre, Picture) VALUES (%s, %s, %s, %s)"
         vals = (
             animecard.name, 
             animecard.season,

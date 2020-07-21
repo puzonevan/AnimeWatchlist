@@ -546,7 +546,16 @@ class AnimeCardFrame(tk.Frame):
         browser.get(self.animecard.source)
 
     def addAnimeToFinished(self): 
+
+        # Add anime to Finished watchlist 
         database.addToFinished(self.animecard)
+
+        # Remove anime from watchlist 
+        database.removeFromWatchlist(self.category, self.animecard.name)
+
+        # Destroy Anime Card Frame 
+        self.destroy()
+
 
 
 """ Add Anime Window Class """
