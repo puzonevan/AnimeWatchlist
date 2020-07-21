@@ -91,23 +91,35 @@ class LeftSideBar(tk.Frame):
 
     """ Helper functions for init """
     def createAddRemoveWatchlistButton(self): 
+
+        # Button for Add / Removing watchlists
         self.addremovewatchlistbutton = tk.Button(
             self, text='Add/Remove', 
             highlightbackground='#242629', 
             pady=10,
             command = lambda: self.addRemoveWatchlistTable(database),
         )
+
+        # Button grids 
         self.addremovewatchlistbutton.grid(row=0, column=0)
 
     def createWatchlistButtons(self): 
+
+        # Loop through each watchlist frame 
         for position in range(len(self.watchlistframes)): 
+
+            # Create button for each watchlist 
             button = tk.Button(
                 self, text=self.categories[position], 
                 highlightbackground='#242629', 
                 pady=5, 
                 command= lambda position=position: self.raiseFrame(self.watchlistframes[position])
             )
+
+            # Button grid 
             button.grid(row=self.buttonsrow, column=0)
+
+            # Increments/appends 
             self.buttonsrow += 1
             self.watchlistbuttons.append(button)
 
