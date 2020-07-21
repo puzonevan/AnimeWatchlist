@@ -405,22 +405,22 @@ class WatchlistFrame(tk.Frame):
         # Get selected option 
         option = self.defaultoption.get()
         
+        filtereddata = [] 
+
         # Filter based on option
         if option == 'A-Z': 
             filtereddata = database.filterByAlpha(self.category)
-            self.animeCards = database.createAnimeCards(filtereddata, self.category)
-            self.deleteCurrentAnimeCardFrames()
-            self.createAnimeCardFrames()
         elif option == 'Genre': 
             filtereddata = database.filterByGenre(self.category)
-            self.animeCards = database.createAnimeCards(filtereddata, self.category)
-            self.deleteCurrentAnimeCardFrames()
-            self.createAnimeCardFrames()
         elif option == 'Seasons': 
             filtereddata = database.filterBySeason(self.category)
-            self.animeCards = database.createAnimeCards(filtereddata, self.category)
-            self.deleteCurrentAnimeCardFrames()
-            self.createAnimeCardFrames()
+        
+        # Create animecards from filtered data 
+        self.animeCards = database.createAnimeCards(filtereddata, self.category)
+
+        # Delete and Create new AnimeCard frames 
+        self.deleteCurrentAnimeCardFrames()
+        self.createAnimeCardFrames()
 
     def updateWatchlistCommand(self): 
         
