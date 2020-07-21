@@ -48,11 +48,14 @@ class AnimeWatchlistUI(tk.Frame):
 
     """ Helper functions for init """
     def databaseCategories(self, dbData): 
-
+        
+        # loop through each key and append 
         for category in dbData.keys(): 
             self.categories.append(category)
 
     def createWatchlistFrames(self, dbData): 
+
+        # loop through each category and create new Watchlist Frame
         for category in self.categories: 
             watchlist = WatchlistFrame(self.parent, self.categories, category, dbData.get(category))
             watchlist.grid(row=0, column=1, sticky="nsew")
@@ -559,15 +562,21 @@ class AnimeCardFrame(tk.Frame):
                     column += 1
 
     def removeAnime(self): 
-
+        
+        # Category check 
         if self.category == "Finished": 
             database.removeFromFinished(self.animecard.name)
         else: 
             database.removeFromWatchlist(self.category, self.animecard.name)
+
+        # Destroy current AnimeCardFrame
         self.destroy()
     
     def linkCommand(self): 
+
+        # Create Browser
         browser = webdriver.Chrome()
+        # Go to link
         browser.get(self.animecard.source)
 
     def addAnimeToFinished(self): 
