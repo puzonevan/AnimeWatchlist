@@ -462,7 +462,7 @@ class AnimeCardFrame(tk.Frame):
             self.addbutton = tk.Button(
                 self, text='Add', 
                 highlightbackground='#242629', 
-                command=lambda: self.addAnime(self.categories, self.category, database, self.animecard),
+                command= self.addAnime,
             )
             self.linkbutton = tk.Button(
                 self, text='Click here for source', 
@@ -475,14 +475,14 @@ class AnimeCardFrame(tk.Frame):
             self.removebutton = tk.Button(
                 self, text='Remove', 
                 highlightbackground='#242629', 
-                command=lambda: self.removeAnime(database, self.category, self.animecard),
+                command= self.removeAnime,
             )
             self.removebutton.grid(row=2, column=2)
         else: 
             self.removebutton = tk.Button(
                 self, text='Remove',
                 highlightbackground='#242629',
-                command=lambda: self.removeAnime(database, self.category, self.animecard), 
+                command= self.removeAnime, 
             )
             self.removebutton.grid(row=2, column=2)
             self.addtofinished = tk.Button(
@@ -493,7 +493,7 @@ class AnimeCardFrame(tk.Frame):
             self.addtofinished.grid(row=4, column=0, columnspan=3)
 
     """ Button Commands """
-    def addAnime(self, categories, currentcategory, database, animecard): 
+    def addAnime(self): 
 
         # Create new window 
         addwindow = tk.Toplevel(self)
@@ -509,23 +509,23 @@ class AnimeCardFrame(tk.Frame):
         addLabel.grid(row=0, column=0)
 
         # add to database method
-        def addToDatabase(name, animecard): 
+        def addToDatabase(name): 
             if name == "Finished": 
-                database.addToFinished(animecard)
+                database.addToFinished(self.animecard)
             else: 
-                database.addToWatchlist(name, animecard)
+                database.addToWatchlist(name, self.animecard)
             addwindow.destroy()
 
         # Make each watchlist except current one its own button 
         # When button is pressed, the anime is added to that watchlist 
         row = 1
         column = 0
-        for cat in categories: 
-            if cat != currentcategory:
+        for cat in self.categories: 
+            if cat != self.category:
                 catbutton = tk.Button(
                     addwindow, text=cat, 
                     highlightbackground='#242629',
-                    command=lambda cat=cat: addToDatabase(cat, animecard)
+                    command=lambda cat=cat: addToDatabase(cat)
                 )
                 catbutton.grid(row=row, column=column)
                 row += 1
@@ -533,12 +533,12 @@ class AnimeCardFrame(tk.Frame):
                     row = 1 
                     column += 1
 
-    def removeAnime(self, database, category, animecard): 
+    def removeAnime(self): 
 
-        if category == "Finished": 
-            database.removeFromFinished(animecard.name)
+        if self.category == "Finished": 
+            database.removeFromFinished(self.animecard.name)
         else: 
-            database.removeFromWatchlist(category, animecard.name)
+            database.removeFromWatchlist(self.category, self.animecard.name)
         self.destroy()
     
     def linkCommand(self): 
