@@ -251,6 +251,8 @@ class WatchlistFrame(tk.Frame):
 
     """ Helper functions for init """
     def createUpdateWatchlistButton(self): 
+
+        # Button to update watchlist 
         self.updatewatchlistbutton = tk.Button(
             self, text="Update", 
             highlightbackground='#16161a',
@@ -259,6 +261,8 @@ class WatchlistFrame(tk.Frame):
         self.updatewatchlistbutton.grid(row=0,column=0)
 
     def createAddAnimeButton(self): 
+
+        # Button to add anime to watchlist 
         self.addanimebutton = tk.Button(
             self, text='Add Anime', 
             highlightbackground='#16161a',
@@ -267,33 +271,49 @@ class WatchlistFrame(tk.Frame):
         self.addanimebutton.grid(row=0, column=1)
 
     def createLeftRightPageButtons(self): 
+
+        # Frame for left right buttons and label 
         leftrightframe = tk.Frame(self)
         leftrightframe.grid(row=0,column=3)
+
+        # Button to scroll left 
         self.leftpagebutton = tk.Button(
             leftrightframe, text="<<", 
             highlightbackground='#16161a',
             pady=5,
             command=self.leftButtonCommand,
         )
+
+        # Button to scroll right 
         self.rightpagebutton = tk.Button(
             leftrightframe, text=">>",
             highlightbackground='#16161a',
             pady=5,
             command=self.rightButtonCommand,
         )
+
+        # Numerical label for current page
         self.pagelabel = tk.Label(
             leftrightframe, text=str(self.page),
             bg='#16161a', pady=6, fg='#94a1b2',
         )
+
+        # Button grids 
         self.leftpagebutton.grid(row=0, column=0)
         self.pagelabel.grid(row=0, column=1)
         self.rightpagebutton.grid(row=0, column=2)
     
     def createFilterFrame(self):
+
+        # Frame for dropdown and filter button 
         filterFrame = tk.Frame(self)
         filterFrame.grid(row=0, column=2)
+
+        # Dropdown default value 
         self.defaultoption = tk.StringVar(self)
         self.defaultoption.set('A-Z')
+
+        # Dropdown menu 
         self.filterOptions = tk.OptionMenu(
             filterFrame, self.defaultoption,
             'A-Z','Genre','Season',
@@ -301,6 +321,7 @@ class WatchlistFrame(tk.Frame):
         self.filterOptions.config(bg='#16161a')
         self.filterOptions.grid(row=0, column=0)
 
+        # Button to do filter
         filterbutton = tk.Button(
             filterFrame, text='Filter', 
             highlightbackground='#16161a',
@@ -309,12 +330,19 @@ class WatchlistFrame(tk.Frame):
         filterbutton.grid(row=0, column=1)
 
     def createAnimeCardFrames(self): 
+
         row = 1
         column = 0
+        # Create the first 16 anime card frames 
         for animecard in self.animeCards[self.start:self.finish]: 
+
+            # Create AnimeCardFrame and grid 
             animeCard = AnimeCardFrame(self, self.categories, self.category, animecard)
             animeCard.grid(row=row, column=column, padx=5, pady=5, sticky='nesw')
+
             self.animeCardFrames.append(animeCard)
+
+            # Organizational increments 
             column += 1
             if column == 4:
                 column = 0
@@ -322,6 +350,8 @@ class WatchlistFrame(tk.Frame):
         
     """ Button Commands """
     def deleteCurrentAnimeCardFrames(self): 
+
+        # Loop through each AnimeCard object and destroy 
         for animeCardFrame in self.animeCardFrames:
             animeCardFrame.destroy()
     
@@ -375,7 +405,7 @@ class WatchlistFrame(tk.Frame):
         # Get selected option 
         option = self.defaultoption.get()
         
-        # filter based on option
+        # Filter based on option
         if option == 'A-Z': 
             filtereddata = database.filterByAlpha(self.category)
             self.animeCards = database.createAnimeCards(filtereddata, self.category)
@@ -394,6 +424,7 @@ class WatchlistFrame(tk.Frame):
 
     def updateWatchlistCommand(self): 
         
+        # Category check
         if self.category == 'CurrentSeason': 
             database.updateCurrentSeasonTable(animeData)
 
