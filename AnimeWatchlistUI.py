@@ -669,43 +669,53 @@ class AddAnimeWindow(tk.Frame):
     """ Helper functions for init """ 
     def createSearchArea(self): 
         
+        # Frame for search entry and button 
         self.searcharea = tk.Frame(self)
         self.searcharea.grid(row=0,column=0)
 
+        # Entry text for user 
         animeentry = tk.Entry(
             self.searcharea, highlightbackground='#242629',
             width=15,
         )
+        # Button to generate search 
         searchbutton = tk.Button(
             self.searcharea, text='Search', 
             highlightbackground='#242629',
             command=lambda: self.searchCommand(animeentry.get()),
         )
 
+        # Content grids 
         animeentry.grid(row=0,column=0)
         searchbutton.grid(row=0,column=1)
 
     def createLeftRightArea(self):
 
+        # Frame for left right buttons 
         self.leftrightarea = tk.Frame(self)
         self.leftrightarea.grid(row=0,column=1)
 
+        # Button to scroll left 
         leftbutton = tk.Button(
             self.leftrightarea, text="<<", 
             highlightbackground='#242629',
             command=self.leftButtonCommand,
         )
+        # Button to scroll right 
         rightbutton = tk.Button(
             self.leftrightarea, text=">>", 
             highlightbackground='#242629',
             command=self.rightButtonCommand,
         )
 
+        # Button grids 
         leftbutton.grid(row=0, column=0)
         rightbutton.grid(row=0, column=1)
 
     def createAnimeCards(self): 
+
         row = 1
+        # Loop and create anime cards for first 5 anime 
         for anime in self.animelist[self.start:self.finish]: 
             animeframe = AnimeCardSearchFrame(self, anime, self.category)
             animeframe.grid(row=row, column=0, columnspan=4, sticky='nsew', pady=2)
@@ -713,6 +723,8 @@ class AddAnimeWindow(tk.Frame):
             row += 1 
 
     def deleteAnimeCards(self): 
+
+        # Loop through each animecard frame and destroy 
         for animecard in self.animecards: 
             animecard.destroy()
 
@@ -730,6 +742,7 @@ class AddAnimeWindow(tk.Frame):
 
     def rightButtonCommand(self): 
 
+        # Upper bound check 
         if self.finish > len(self.animelist): 
             return 
             
@@ -763,7 +776,7 @@ class AddAnimeWindow(tk.Frame):
                     if entry in synonym: 
                         searchresults.append(anime)
                         break
-
+                        
             self.animelist = searchresults 
             self.deleteAnimeCards() 
             self.createAnimeCards()
