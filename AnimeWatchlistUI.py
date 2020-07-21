@@ -823,6 +823,8 @@ class AnimeCardSearchFrame(tk.Frame):
 
     """ Helper functions for init """
     def createName(self): 
+
+        # Label for Anime Name 
         self.name = tk.Message(
             self, text=self.anime.get('name'), 
             width=380, pady=5,
@@ -831,57 +833,72 @@ class AnimeCardSearchFrame(tk.Frame):
         self.name.grid(row=0,column=0, columnspan=3)
 
     def createTypeSeasonEpCount(self): 
+
+        # Label for type of anime
         self.type = tk.Label(
             self, text=self.anime.get('type'), 
             fg='#fffffe', bg='#16161a',
         )
-        self.type.grid(row=1, column=0)
 
+        # Label for season of anime
         self.season = tk.Label(
             self, text=self.anime.get('season'), 
             fg='#fffffe', bg='#16161a',
         )
-        self.season.grid(row=1,column=1)
 
+        # Label for episode count of anime 
         self.episodecount = tk.Label(
             self, text="Episode Count: {}".format(self.anime.get('episodecount')),
             fg='#fffffe', bg='#16161a',
         )
+        
+        # Content Grids
+        self.type.grid(row=1, column=0)
+        self.season.grid(row=1,column=1)
         self.episodecount.grid(row=1, column=2)
 
     def createGenreStatus(self): 
-
+        
+        # Create string with first 3 genres
         genretext = "" 
         genres = self.anime.get('genres')[0:3]
         for genre in genres: 
             genretext += genre + " "
 
+        # Label for genre of anime 
         self.genre = tk.Label(
             self, text=genretext, 
             fg='#fffffe', bg='#16161a',
         )
-        self.genre.grid(row=2, column=0, columnspan=2)
 
+        # Label for status of anime 
         self.status = tk.Label(
             self, text=self.anime.get('status'), 
             fg='#fffffe', bg='#16161a',
         )
+
+        # Content grids 
+        self.genre.grid(row=2, column=0, columnspan=2)
         self.status.grid(row=2, column=2)
 
     def createLinkAddButton(self): 
-
+        
+        # Button to link to anime source
         self.linkbutton = tk.Button(
             self, text="Click for source",
             highlightbackground='#16161a',
             command=self.linkCommand,
         )
-        self.linkbutton.grid(row=3, column=0, columnspan=2)
 
+        # Button to add anime to current watchlist 
         self.addbutton = tk.Button(
             self, text='Add Anime', 
             highlightbackground='#16161a',
             command=self.addAnimeCommand,
         )
+
+        # Button grids
+        self.linkbutton.grid(row=3, column=0, columnspan=2)
         self.addbutton.grid(row=3, column=2)
 
     """ Button Commands """ 
@@ -890,6 +907,7 @@ class AnimeCardSearchFrame(tk.Frame):
         # create animecard from anime 
         animecard = database.createAnimeCard(self.formatanime(), self.category)
 
+        # Category checks
         if self.category == 'Finished': 
             database.addToFinished(animecard)
         else: 
@@ -903,7 +921,9 @@ class AnimeCardSearchFrame(tk.Frame):
 
     """ format anime data to list for animecard """
     def formatanime(self): 
+
         output = [] 
+        # Category Check
         if self.category == 'Finished': 
             output.append(0)
             output.append(self.anime.get('name'))
