@@ -409,19 +409,28 @@ class AnimeCardFrame(tk.Frame):
         self.animecard = animecard
 
         # Non-Parameters 
+
+        # Content 
         self.picture = None
         self.name = None 
         self.season = None 
         self.genre = None 
+        self.currentepisode = None
+
+        # Additional Functionality
         self.addbutton = None 
         self.removebutton = None 
         self.linkbutton = None 
+        self.addtofinished = None
 
         """ Picture """
         self.createPicture()
 
         """ Name/Season/Genre """
         self.createNameSeasonGenre()
+
+        """ Current Episode """ 
+        self.createCurrentEpisodeFrame()
 
         """ Additional functionality based on watchlist category """
         self.createAdditionalFunctionality()
@@ -449,7 +458,32 @@ class AnimeCardFrame(tk.Frame):
         else: 
             self.name.grid(row=1, column=0, columnspan=3)
             self.genre.grid(row=2, column=0)
-            self.season.grid(row=3, column=0, columnspan=3)
+            self.season.grid(row=3, column=0, columnspan=2)
+
+    def createCurrentEpisodeFrame(self): 
+
+        if self.category == 'CurrentSeason' or self.category == 'Finished': 
+            return 
+
+        self.currentepisode = tk.Frame(self)
+        self.currentepisode.grid(row=3, column=2)
+
+        episodelabel = tk.Label(
+            self.currentepisode, text=str(self.animecard.currentep), 
+            bg='#242629', pady=4, fg='#fffffe'
+        )
+        episodelabel.grid(row=0, column=1)
+        upbutton = tk.Button(
+            self.currentepisode, text='>', 
+            highlightbackground='#242629',
+        )
+        downbutton = tk.Button(
+            self.currentepisode, text='<', 
+            highlightbackground='#242629',
+        )
+        upbutton.grid(row=0, column=2)
+        downbutton.grid(row=0, column=0)
+
 
     def createAdditionalFunctionality(self): 
 
@@ -480,6 +514,12 @@ class AnimeCardFrame(tk.Frame):
                 command=lambda: self.removeAnime(database, self.category, self.animecard), 
             )
             self.removebutton.grid(row=2, column=2)
+            self.addtofinished = tk.Button(
+                self, text='Add to Finished', 
+                highlightbackground='#242629', 
+
+            )
+            self.addtofinished.grid(row=4, column=0, columnspan=3)
 
     """ Button Commands """
     def addAnime(self, categories, currentcategory, database, animecard): 
