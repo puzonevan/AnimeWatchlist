@@ -24,6 +24,7 @@ class AnimeCard():
         self.pictureurl = '' 
         self.source = ''
         self.currentep = 0
+        self.epcount = 0 
         
         if category == 'CurrentSeason': 
             self.name = data[1]

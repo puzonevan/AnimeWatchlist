@@ -34,7 +34,7 @@ class Database():
             self.cursor.execute(sql)
             output[table] = self.cursor.fetchall()
 
-        # Format output
+        # Format output as AnimeCards 
         for category in output.keys(): 
             categoryanime = []
             for anime in output.get(category): 
@@ -186,6 +186,7 @@ class AnimeData():
             filteredanime['season'] = "{} {}".format(anime.get('animeSeason').get('season'), anime.get('animeSeason').get('year'))
             filteredanime['source'] = anime.get('sources')[0]
             filteredanime['pictureurl'] = anime.get('picture')
+            filteredanime['epcount'] = anime.get('episodes')
 
             output.append(filteredanime)
         return output
