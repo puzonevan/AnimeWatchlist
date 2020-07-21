@@ -488,7 +488,7 @@ class AnimeCardFrame(tk.Frame):
             self.addtofinished = tk.Button(
                 self, text='Add to Finished', 
                 highlightbackground='#242629', 
-
+                command= self.addAnimeToFinished, 
             )
             self.addtofinished.grid(row=4, column=0, columnspan=3)
 
@@ -545,6 +545,8 @@ class AnimeCardFrame(tk.Frame):
         browser = webdriver.Chrome()
         browser.get(self.animecard.source)
 
+    def addAnimeToFinished(self): 
+        database.addToFinished(self.animecard)
 
 
 """ Add Anime Window Class """
