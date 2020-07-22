@@ -316,7 +316,7 @@ class WatchlistFrame(tk.Frame):
         # Dropdown menu 
         self.filterOptions = tk.OptionMenu(
             filterFrame, self.defaultoption,
-            'A-Z','Genre','Season',
+            'A-Z','Genre','Seasons',
         )
         self.filterOptions.config(bg='#16161a')
         self.filterOptions.grid(row=0, column=0)
