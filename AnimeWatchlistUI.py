@@ -231,7 +231,7 @@ class WatchlistFrame(tk.Frame):
         self.filterOptions = None 
         self.animeCardFrames = [] 
         self.start = 0
-        self.finish = 16
+        self.finish = 8
         self.page = 1
         self.leftpagebutton = None
         self.pagelabel = None  
@@ -334,9 +334,14 @@ class WatchlistFrame(tk.Frame):
 
     def createAnimeCardFrames(self): 
 
+        
+        # Category check: 
+        if self.category == 'CurrentSeason': 
+            self.finish += 8
+
+        # Create the anime card frames from start to last
         row = 1
         column = 0
-        # Create the first 16 anime card frames 
         for animecard in self.animeCards[self.start:self.finish]: 
 
             # Create AnimeCardFrame and grid 
@@ -359,11 +364,11 @@ class WatchlistFrame(tk.Frame):
             animeCardFrame.destroy()
     
     def leftButtonCommand(self): 
-
+        
         # Decrement range 
-        if self.start >= 16: 
-            self.start -= 16
-            self.finish -= 16
+        if self.start >= 8: 
+            self.start -= 8
+            self.finish -= 8
 
         # Delete current anime cards and create new ones 
         self.deleteCurrentAnimeCardFrames()
@@ -379,8 +384,8 @@ class WatchlistFrame(tk.Frame):
         # Increment range 
         if self.finish > len(self.animeCardFrames): 
             return 
-        self.start += 16
-        self.finish += 16
+        self.start += 8
+        self.finish += 8
 
         # Delete current anime cards and create new ones 
         self.deleteCurrentAnimeCardFrames()
