@@ -90,7 +90,21 @@ class testWatchlistDB(unittest.TestCase):
         database.destroyTable('TestTable')
 
     def testRemoveFromWatchlist(self): 
-        pass
+        
+        # Create Test Table and Test Card
+        database.createTableWatchlist('TestTable')
+        card = self.createNormalCard()
+
+        # Add Card And Remove 
+        database.addToWatchlist('TestTable', card)
+        database.removeFromWatchlist('TestTable', 'Anime')
+
+        # Get data and check 
+        data = database.getWatchlistTable('TestTable')
+        self.assertTrue(len(data) == 0)
+
+        # Destroy test table 
+        database.destroyTable('TestTable')
 
     def testAddToFinished(self): 
         pass
