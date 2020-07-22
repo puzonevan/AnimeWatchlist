@@ -145,10 +145,6 @@ class Database():
         self.cursor.execute(sql)
         return self.cursor.fetchall()
     
-    def filterByType(self, watchlist): 
-        sql = "SELECT * FROM {} ORDER BY Type".format(watchlist)
-        self.cursor.execute(sql)
-        return self.cursor.fetchall()
 
     """ Create Anime Cards """ 
     def createAnimeCard(self, anime, category): 

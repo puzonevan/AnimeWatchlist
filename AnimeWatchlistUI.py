@@ -1,6 +1,9 @@
 import tkinter as tk 
 import mysql.connector
 from selenium import webdriver
+from PIL import Image, ImageTk
+from io import BytesIO
+import requests
 # Debug 
 # import pprint, time
 
@@ -808,6 +811,7 @@ class AnimeCardSearchFrame(tk.Frame):
         self.status = None
         self.addbutton = None
         self.linkbutton = None
+        self.picture = None
 
         """ Name """
         self.createName() 
@@ -820,6 +824,10 @@ class AnimeCardSearchFrame(tk.Frame):
 
         """ Link button """
         self.createLinkAddButton()
+
+        """ Picture """
+        self.createPicture() 
+
 
     """ Helper functions for init """
     def createName(self): 
@@ -900,6 +908,20 @@ class AnimeCardSearchFrame(tk.Frame):
         # Button grids
         self.linkbutton.grid(row=3, column=0, columnspan=2)
         self.addbutton.grid(row=3, column=2)
+
+    def createPicture(self): 
+
+        # Convert image url 
+        imagerequest = requests.get(self.anime.get('pictureurl'))
+        imagedata = imagerequest.content
+        convertimg = Image.open(BytesIO(imagedata))
+        convertimg = convertimg.resize((100, 150), Image.ANTIALIAS)
+        image = ImageTk.PhotoImage(convertimg)
+
+        # Set image to Label and grid
+        self.picture = tk.Label(self, image=image)
+        self.picture.photo = image
+        self.picture.grid(row=0, column=3, rowspan=4)
 
     """ Button Commands """ 
     def addAnimeCommand(self): 
