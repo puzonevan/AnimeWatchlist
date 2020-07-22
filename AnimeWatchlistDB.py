@@ -17,6 +17,7 @@ class Database():
         )
         self.cursor = self.LOCALSERVER.cursor()
 
+    
     """ loadDatabase method - retrieves data from database """
     def loadDatabase(self): 
 
@@ -43,6 +44,16 @@ class Database():
             output[category] = categoryanime
         
         return output
+    
+    """ Get tables """
+    def showTables(self): 
+        tables = [] 
+        self.cursor.execute("SHOW TABLES")
+
+        for (table,) in self.cursor: 
+            tables.append(table,)
+    
+        return tables
 
     """ Table creation/destroy methods - create given tables in database """
     def createTableCurrentSeason(self): 
