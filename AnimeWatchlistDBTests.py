@@ -1,6 +1,6 @@
 import unittest 
 import mysql.connector, json
-import AnimeCard
+import AnimeCard as ac
 import AnimeWatchlistDB as db
 import pprint
 
@@ -8,6 +8,16 @@ import pprint
 database = db.Database()
 
 class testWatchlistDB(unittest.TestCase): 
+
+    """ Helper Anime Card Methods """
+    def createCurrentSeasonCard(self): 
+        return ac.AnimeCard([0 , 'Anime', 'Summer', 'Ongoing', 'Action', 'url', 'url'], 'CurrentSeason')
+
+    def createFinishedCard(self): 
+        return ac.AnimeCard([0 , 'Anime', 'Summer', 'Action', 'url'], 'Finished')
+
+    def createNormalCard(self): 
+        return ac.AnimeCard([0 , 'Anime', 'Summer', 'Ongoing', 'Action', 0, 'url'], 'OtherCategory')
 
     """ Database Tests """ 
     
@@ -67,7 +77,17 @@ class testWatchlistDB(unittest.TestCase):
         self.assertTrue(len(data) != 0)
 
     def testAddToWatchlist(self): 
-        pass 
+        
+        # Create Test Table and Test AnimeCard
+        database.createTableWatchlist('TestTable') 
+        anime = self.createNormalCard()
+
+        database.addToWatchlist('TestTable' ,anime)
+        data = database.getWatchlistTable('TestTable')
+        self.assertTrue(len(data) != 0) 
+
+        # Destroy Test Table after test
+        database.destroyTable('TestTable')
 
     def testRemoveFromWatchlist(self): 
         pass
