@@ -226,7 +226,7 @@ class WatchlistFrame(tk.Frame):
         # Non-Parameters
         self.parent = parent
         self.updatewatchlist = None
-        self.addanimebutton = None
+        self.addremoveanime = None
         self.defaultoption = None 
         self.filterOptions = None 
         self.animeCardFrames = [] 
@@ -243,7 +243,7 @@ class WatchlistFrame(tk.Frame):
         self.createUpdateWatchlist()
 
         """ Add Anime button """ 
-        self.createAddAnimeButton()
+        self.createAddRemoveAnime()
 
         """ Filter Frame """ 
         self.createFilterFrame()
@@ -278,15 +278,28 @@ class WatchlistFrame(tk.Frame):
         )
         updatewatchlistbutton.grid(row=0,column=1)
 
-    def createAddAnimeButton(self): 
+    def createAddRemoveAnime(self): 
 
+        # Frame for add and remove buttons 
+        self.addremoveanime = tk.Frame(self)
+        self.addremoveanime.grid(row=0, column=1)
+
+        # Button remove anime from watchlist
+        removeanimebutton = tk.Button(
+            self.addremoveanime, text='Remove', 
+            highlightbackground='#16161a',
+            command=self.removeAnimeCommand,
+        )
         # Button to add anime to watchlist 
-        self.addanimebutton = tk.Button(
-            self, text='Add Anime', 
+        addanimebutton = tk.Button(
+            self.addremoveanime, text='Add Anime', 
             highlightbackground='#16161a',
             command=self.addAnimeCommand,
         )
-        self.addanimebutton.grid(row=0, column=1)
+
+        # Button grids 
+        removeanimebutton.grid(row=0, column=0)
+        addanimebutton.grid(row=0, column=1)
 
     def createLeftRightPageButtons(self): 
 
@@ -425,6 +438,13 @@ class WatchlistFrame(tk.Frame):
         # Create AddAnimeWindow object for new window
         animewindow = AddAnimeWindow(searchaddanimewindow, self.category)
         animewindow.pack()
+
+    def removeAnimeCommand(self):
+        
+        for animecard in self.animeCardFrames: 
+            animecard.genre.destroy()
+            animecard.season.destroy()
+            animecard.addtofinished.destroy()
 
     def filterCommand(self): 
 
