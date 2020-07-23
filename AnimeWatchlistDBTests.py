@@ -107,28 +107,88 @@ class testWatchlistDB(unittest.TestCase):
         database.destroyTable('TestTable')
 
     def testAddToFinished(self): 
-        pass
+        
+        # Add Anime to finished 
+        currentlength = len(database.getWatchlistTable('Finished'))
+        database.addToFinished(self.createFinishedCard())
+        newlength = len(database.getWatchlistTable('Finished'))
+
+        # Check length 
+        self.assertEquals(currentlength + 1, newlength)
 
     def testRemoveFromFinished(self): 
-        pass
+        
+        # Remove same anime from finished 
+        currentlength = len(database.getWatchlistTable('Finished'))
+        database.removeFromFinished('Anime')
+        newlength = len(database.getWatchlistTable('Finished'))
+
+        # Check length 
+        self.assertEquals(currentlength - 1, newlength)
 
     def testFilterByGenre(self): 
-        pass
+        
+        # Create test watchlist 
+        database.createTableWatchlist('TestTable')
+
+        # Create 3 anime cards with different genres 
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime', 'Summer', 'Ongoing', 'Comedy', 0, 'url'], 'OtherCategory'))
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime', 'Summer', 'Ongoing', 'Action', 0, 'url'], 'OtherCategory'))
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime', 'Summer', 'Ongoing', 'SliceOfLife', 0, 'url'], 'OtherCategory'))
+
+        # Call filter method 
+        filtereddata = database.filterByGenre('TestTable')
+
+        # Asserts
+        self.assertEquals(filtereddata[0][4], 'Action')
+        self.assertEquals(filtereddata[1][4], 'Comedy')
+        self.assertEquals(filtereddata[2][4], 'SliceOfLife')
+
+        # Delete Test Table 
+        database.destroyTable('TestTable')
 
     def testFilterByAlpha(self): 
-        pass
+        
+        # Create test table 
+        database.createTableWatchlist('TestTable')
+
+        # Create 3 anime card with different names 
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime3', 'Summer', 'Ongoing', 'Comedy', 0, 'url'], 'OtherCategory'))
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime2', 'Summer', 'Ongoing', 'Action', 0, 'url'], 'OtherCategory'))
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime1', 'Summer', 'Ongoing', 'SliceOfLife', 0, 'url'], 'OtherCategory'))
+
+        # Call filter method 
+        filtereddata = database.filterByAlpha('TestTable')
+
+        # Assert 
+        self.assertEquals(filtereddata[0][1], 'Anime1')
+        self.assertEquals(filtereddata[1][1], 'Anime2')
+        self.assertEquals(filtereddata[2][1], 'Anime3')
+
+        # Destroy test table 
+        database.destroyTable('TestTable')
 
     def testFilterBySeason(self): 
-        pass
+        
+        # Create test table 
+        database.createTableWatchlist('TestTable')
 
-    def testCreateAnimeCard(self): 
-        pass
+        # Create 3 anime card with different seasons 
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime3', 'Summer 2018', 'Ongoing', 'Comedy', 0, 'url'], 'OtherCategory'))
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime2', 'Summer 2016', 'Ongoing', 'Action', 0, 'url'], 'OtherCategory'))
+        database.addToWatchlist('TestTable', ac.AnimeCard([0 , 'Anime1', 'Winter 2019', 'Ongoing', 'SliceOfLife', 0, 'url'], 'OtherCategory'))
 
-    def testCreateAnimeCards(self): 
-        pass
+        # Call filter method 
+        filtereddata = database.filterBySeason('TestTable')
 
-    
-    """ JSON Tables """ 
+        # Assert 
+        self.assertEquals(filtereddata[0][2], 'Summer 2016')
+        self.assertEquals(filtereddata[1][2], 'Summer 2018')
+        self.assertEquals(filtereddata[2][2], 'Winter 2019')
+
+        # Destroy test table
+        database.destroyTable('TestTable')
+
     
     
 
