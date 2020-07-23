@@ -447,8 +447,11 @@ class WatchlistFrame(tk.Frame):
             animecard.season.destroy()
 
             if self.category != 'Finished': 
-                animecard.addtofinished.destroy()
-            animecard.removebutton.grid(row=2, column=0, columnspan=3)
+                animecard.addtofinished.pack(side=tk.TOP)
+
+            animecard.removebutton.pack(side=tk.TOP)
+            
+
 
     def filterCommand(self): 
 
@@ -527,6 +530,9 @@ class AnimeCardFrame(tk.Frame):
         """ Additional functionality based on watchlist category """
         self.createAdditionalFunctionality()
 
+        """ Grids """ 
+        self.contentGrid()
+
     """ Helper methods for init """
     def createPicture(self): 
 
@@ -540,26 +546,15 @@ class AnimeCardFrame(tk.Frame):
         # Insert into label 
         self.picture = tk.Label(self, image=image)
         self.picture.photo = image
-        self.picture.grid(row=0,column=0, columnspan=3)
 
     def createNameSeasonGenre(self): 
         
         # Name/Season/Genre 
-        self.name = tk.Message(self, text=self.animecard.name, width=200, fg='#fffffe', bg='#242629')
+        self.name = tk.Message(self, text=self.animecard.name, width=170, fg='#fffffe', bg='#242629')
         self.season = tk.Label(self, text=self.animecard.season, fg='#7f5af0', bg='#242629')
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#7f5af0', bg='#242629')
 
-        # Category grid checks 
-        if self.category == 'CurrentSeason': 
-            self.name.grid(row=0, column=0, columnspan=3)
-            self.genre.grid(row=1, column=0, columnspan=2)
-        else: 
-            self.name.grid(row=1, column=0, columnspan=3)
-            self.genre.grid(row=3, column=0, columnspan=3)
-            self.season.grid(row=2, column=0, columnspan=2)
-
-    def createAdditionalFunctionality(self): 
-        
+    def createAdditionalFunctionality(self):  
         # Category checks 
         if self.category == 'CurrentSeason': 
 
@@ -576,25 +571,14 @@ class AnimeCardFrame(tk.Frame):
                 highlightbackground='#242629', 
                 command=self.linkCommand,
             )
-
-            # Grid buttons 
-            self.addbutton.grid(row=1, column=2)
-            self.linkbutton.grid(row=2, column=0, columnspan=3)
-
-        elif self.category == 'Finished': 
-
+        elif self.category == 'Finished':
             # Finished remove button 
             self.removebutton = tk.Button(
                 self, text='Remove', 
                 highlightbackground='#242629', 
                 command= self.removeAnime,
             )
-
-            # Button grids 
-            self.removebutton.grid_forget()
-
         else: 
-
             # Watchlist remove button 
             self.removebutton = tk.Button(
                 self, text='Remove',
@@ -609,9 +593,32 @@ class AnimeCardFrame(tk.Frame):
                 command= self.addAnimeToFinished, 
             )
 
-            # Button grids 
-            self.removebutton.grid_forget()
-            self.addtofinished.grid(row=2, column=2)
+    def contentGrid(self): 
+        
+
+        if self.category == 'CurrentSeason': 
+
+            self.name.grid(row=1, column=0, columnspan=3)
+            self.season.grid(row=2, column=0, columnspan=2)
+            self.genre.grid(row=3, column=0, columnspan=3)
+
+            self.addbutton.grid(row=2, column=2)
+            self.linkbutton.grid(row=4, column=0, columnspan=3)
+        elif self.category == 'Finished': 
+
+            self.name.pack(side=tk.TOP)
+            self.picture.pack(side=tk.TOP)
+
+            self.removebutton.pack_forget()
+        else: 
+
+            self.name.pack(side=tk.TOP)
+            self.picture.pack(side=tk.TOP)
+            self.season.pack(side=tk.TOP)
+            self.genre.pack(side=tk.TOP)
+
+            self.removebutton.pack_forget()
+            self.addtofinished.pack_forget()
 
     """ Button Commands """
     def addAnime(self): 
