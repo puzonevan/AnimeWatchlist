@@ -620,14 +620,28 @@ class AnimeCardFrame(tk.Frame):
     def removeAnime(self): 
         
         # Category check 
-        if self.category == "Finished": 
+        if self.category == "Finished":
+ 
             database.removeFromFinished(self.animecard.name)
+
+            # Destroy everything inside 
+            self.deleteContent()
+            self.removebutton.destroy()
+
         else: 
+
             database.removeFromWatchlist(self.category, self.animecard.name)
 
-        # Destroy current AnimeCardFrame
-        self.destroy()
-    
+            # Destroy everything inside 
+            self.deleteContent()
+            self.removebutton.destroy()
+            self.addtofinished.destroy()
+
+
+        # Label telling user it was removed 
+        removedlabel = tk.Label(self, text='Removed!', fg='#fffffe', bg='#242629')
+        removedlabel.place(relx=.5, rely=.5, anchor="center")
+
     def linkCommand(self): 
 
         # Create Browser
@@ -644,7 +658,20 @@ class AnimeCardFrame(tk.Frame):
         database.removeFromWatchlist(self.category, self.animecard.name)
 
         # Destroy Anime Card Frame 
-        self.destroy()
+        self.deleteContent()
+        self.removebutton.destroy()
+        self.addtofinished.destroy()
+
+        # Label telling user it was added 
+        addedlabel = tk.Label(self, text='Added!!', fg='#fffffe', bg='#242629')
+        addedlabel.place(relx=.5, rely=.5, anchor="center")
+
+    def deleteContent(self): 
+        self.picture.destroy()
+        self.name.destroy()
+        self.season.destroy()
+        self.genre.destroy()
+        
 
 
 
