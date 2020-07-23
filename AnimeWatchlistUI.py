@@ -545,7 +545,7 @@ class AnimeCardFrame(tk.Frame):
     def createNameSeasonGenre(self): 
         
         # Name/Season/Genre 
-        self.name = tk.Message(self, text=self.animecard.name, width=170, fg='#fffffe', bg='#242629')
+        self.name = tk.Message(self, text=self.animecard.name, width=200, fg='#fffffe', bg='#242629')
         self.season = tk.Label(self, text=self.animecard.season, fg='#7f5af0', bg='#242629')
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#7f5af0', bg='#242629')
 
@@ -556,7 +556,7 @@ class AnimeCardFrame(tk.Frame):
         else: 
             self.name.grid(row=1, column=0, columnspan=3)
             self.genre.grid(row=3, column=0, columnspan=3)
-            self.season.grid(row=2, column=0, columnspan=3)
+            self.season.grid(row=2, column=0, columnspan=2)
 
     def createAdditionalFunctionality(self): 
         
@@ -604,14 +604,14 @@ class AnimeCardFrame(tk.Frame):
             
             # Watchlist add to finished button 
             self.addtofinished = tk.Button(
-                self, text='Add to Finished', 
+                self, text='Finished', 
                 highlightbackground='#242629', 
                 command= self.addAnimeToFinished, 
             )
 
             # Button grids 
             self.removebutton.grid_forget()
-            self.addtofinished.grid(row=4, column=0, columnspan=3)
+            self.addtofinished.grid(row=2, column=2)
 
     """ Button Commands """
     def addAnime(self): 
