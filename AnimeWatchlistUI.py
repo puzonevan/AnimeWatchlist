@@ -442,9 +442,13 @@ class WatchlistFrame(tk.Frame):
     def removeAnimeCommand(self):
         
         for animecard in self.animeCardFrames: 
+
             animecard.genre.destroy()
             animecard.season.destroy()
-            animecard.addtofinished.destroy()
+
+            if self.category != 'Finished': 
+                animecard.addtofinished.destroy()
+            animecard.removebutton.grid(row=2, column=0, columnspan=3)
 
     def filterCommand(self): 
 
@@ -552,7 +556,7 @@ class AnimeCardFrame(tk.Frame):
         else: 
             self.name.grid(row=1, column=0, columnspan=3)
             self.genre.grid(row=3, column=0, columnspan=3)
-            self.season.grid(row=2, column=0, columnspan=2)
+            self.season.grid(row=2, column=0, columnspan=3)
 
     def createAdditionalFunctionality(self): 
         
@@ -587,7 +591,7 @@ class AnimeCardFrame(tk.Frame):
             )
 
             # Button grids 
-            self.removebutton.grid(row=2, column=2)
+            self.removebutton.grid_forget()
 
         else: 
 
@@ -606,7 +610,7 @@ class AnimeCardFrame(tk.Frame):
             )
 
             # Button grids 
-            self.removebutton.grid(row=2, column=2)
+            self.removebutton.grid_forget()
             self.addtofinished.grid(row=4, column=0, columnspan=3)
 
     """ Button Commands """
