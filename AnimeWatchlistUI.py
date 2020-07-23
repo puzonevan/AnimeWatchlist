@@ -971,6 +971,16 @@ class AnimeCardSearchFrame(tk.Frame):
             database.addToFinished(animecard)
         else: 
             database.addToWatchlist(self.category, animecard)
+
+        # Delete card content 
+        self.deleteContent()
+
+        # Label telling user it was added 
+        addedlabel = tk.Label(
+            self, text='Added to {}'.format(self.category), 
+            fg='#fffffe', bg='#16161a',
+        )
+        addedlabel.place(relx=.5, rely=.5, anchor="center")
         
     def linkCommand(self): 
 
@@ -998,3 +1008,15 @@ class AnimeCardSearchFrame(tk.Frame):
             output.append(1)
             output.append(self.anime.get('pictureurl'))
         return output
+
+    def deleteContent(self): 
+        self.name.destroy()
+        self.type.destroy()
+        self.season.destroy() 
+        self.episodecount.destroy()
+        self.genre.destroy()
+        self.status.destroy()
+        self.addbutton.destroy()
+        self.linkbutton.destroy()
+        self.picture.destroy()
+
