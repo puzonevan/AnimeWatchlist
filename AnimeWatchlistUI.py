@@ -225,7 +225,7 @@ class WatchlistFrame(tk.Frame):
 
         # Non-Parameters
         self.parent = parent
-        self.updatewatchlistbutton = None
+        self.updatewatchlist = None
         self.addanimebutton = None
         self.defaultoption = None 
         self.filterOptions = None 
@@ -240,7 +240,7 @@ class WatchlistFrame(tk.Frame):
         self.rightpagebutton = None 
 
         """ Update watchlist button """
-        self.createUpdateWatchlistButton()
+        self.createUpdateWatchlist()
 
         """ Add Anime button """ 
         self.createAddAnimeButton()
@@ -255,15 +255,28 @@ class WatchlistFrame(tk.Frame):
         self.createLeftRightPageButtons()
 
     """ Helper functions for init """
-    def createUpdateWatchlistButton(self): 
+    def createUpdateWatchlist(self): 
+        
+        # Frame for Update Watchlist
+        self.updatewatchlist = tk.Frame(self)
+        self.updatewatchlist.grid(row=0, column=0)
+
+        # Label for current category 
+        watchlistlabel = tk.Label(
+            self.updatewatchlist, 
+            text=self.category, 
+            fg='#fffffe', bg='#16161a',
+            pady=4,
+        )
+        watchlistlabel.grid(row=0, column=0)
 
         # Button to update watchlist 
-        self.updatewatchlistbutton = tk.Button(
-            self, text="Update", 
+        updatewatchlistbutton = tk.Button(
+            self.updatewatchlist, text="Update", 
             highlightbackground='#16161a',
             command=self.updateWatchlistCommand,
         )
-        self.updatewatchlistbutton.grid(row=0,column=0)
+        updatewatchlistbutton.grid(row=0,column=1)
 
     def createAddAnimeButton(self): 
 
