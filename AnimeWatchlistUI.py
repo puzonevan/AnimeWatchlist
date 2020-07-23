@@ -104,7 +104,7 @@ class LeftSideBar(tk.Frame):
         )
 
         # Button grids 
-        self.addremovewatchlistbutton.grid(row=0, column=0)
+        self.addremovewatchlistbutton.pack(side=tk.TOP)
 
     def createWatchlistButtons(self): 
 
@@ -120,7 +120,7 @@ class LeftSideBar(tk.Frame):
             )
 
             # Button grid 
-            button.grid(row=self.buttonsrow, column=0)
+            button.pack(side=tk.TOP)
 
             # Increments/appends 
             self.buttonsrow += 1
@@ -361,7 +361,8 @@ class WatchlistFrame(tk.Frame):
         filterbutton.grid(row=0, column=1)
 
     def createAnimeCardFrames(self): 
-
+        
+        
         # Create the anime card frames from start to last
         row = 1
         column = 0
@@ -385,6 +386,8 @@ class WatchlistFrame(tk.Frame):
         # Loop through each AnimeCard object and destroy 
         for animeCardFrame in self.animeCardFrames:
             animeCardFrame.destroy()
+
+        self.animeCardFrames = [] 
     
     def leftButtonCommand(self): 
         
@@ -544,7 +547,7 @@ class AnimeCardFrame(tk.Frame):
         image = self.animecard.convertPictureUrl()
 
         # Insert into label 
-        self.picture = tk.Label(self, image=image)
+        self.picture = tk.Label(self, image=image, relief=tk.RAISED, bg='#242629')
         self.picture.photo = image
 
     def createNameSeasonGenre(self): 
@@ -919,7 +922,7 @@ class AnimeCardSearchFrame(tk.Frame):
             width=380, pady=5,
             fg='#fffffe', bg='#16161a',
         )
-        self.name.grid(row=0,column=0, columnspan=3)
+        self.name.grid(row=0,column=1, columnspan=3)
 
     def createTypeSeasonEpCount(self): 
 
@@ -942,9 +945,9 @@ class AnimeCardSearchFrame(tk.Frame):
         )
         
         # Content Grids
-        self.type.grid(row=1, column=0)
-        self.season.grid(row=1,column=1)
-        self.episodecount.grid(row=1, column=2)
+        self.type.grid(row=1, column=1)
+        self.season.grid(row=1,column=2)
+        self.episodecount.grid(row=1, column=3)
 
     def createGenreStatus(self): 
         
@@ -967,8 +970,8 @@ class AnimeCardSearchFrame(tk.Frame):
         )
 
         # Content grids 
-        self.genre.grid(row=2, column=0, columnspan=2)
-        self.status.grid(row=2, column=2)
+        self.genre.grid(row=2, column=1, columnspan=2)
+        self.status.grid(row=2, column=3)
 
     def createLinkAddButton(self): 
         
@@ -987,8 +990,8 @@ class AnimeCardSearchFrame(tk.Frame):
         )
 
         # Button grids
-        self.linkbutton.grid(row=3, column=0, columnspan=2)
-        self.addbutton.grid(row=3, column=2)
+        self.linkbutton.grid(row=3, column=1, columnspan=2)
+        self.addbutton.grid(row=3, column=3)
 
     def createPicture(self): 
 
@@ -1002,7 +1005,7 @@ class AnimeCardSearchFrame(tk.Frame):
         # Set image to Label and grid
         self.picture = tk.Label(self, image=image)
         self.picture.photo = image
-        self.picture.grid(row=0, column=3, rowspan=4)
+        self.picture.grid(row=0, column=0, rowspan=4)
 
     """ Button Commands """ 
     def addAnimeCommand(self): 

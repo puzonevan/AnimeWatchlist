@@ -54,7 +54,7 @@ class AnimeCard():
         imagerequest = requests.get(self.pictureurl)
         imagedata = imagerequest.content
         convertimg = Image.open(BytesIO(imagedata))
-        convertimg = convertimg.resize((100, 150), Image.ANTIALIAS)
+        convertimg = convertimg.resize((150, 200), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(convertimg)
 
         return image
