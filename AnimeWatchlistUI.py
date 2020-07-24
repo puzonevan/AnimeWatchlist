@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from io import BytesIO
 import requests
 # Debug 
-import pprint, time
+# import pprint, time
 
 """ Global Variables """
 database = None 
