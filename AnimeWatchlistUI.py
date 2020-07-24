@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from io import BytesIO
 import requests
 # Debug 
-# import pprint, time
+import pprint, time
 
 """ Global Variables """
 database = None 
@@ -81,131 +81,125 @@ class LeftSideBar(tk.Frame):
         self.watchlistframes = watchlistframes
         
         # Non-Parameters
-        self.addremovewatchlistbutton = None
-        self.addremoveframe = None
-        self.watchlistbuttons = []
-        self.buttonsrow = 1
+        self.addremoveframe = None 
+        self.buttonframes = []
+        self.userinput = None
         
-        """ AddToWatchlist button """
-        self.createAddRemoveWatchlistButton()
-        
-        """ Category buttons """
-        self.createWatchlistButtons()
+        self.createAddRemoveFrame() 
+
+        self.createButtonFrames()
 
     """ Helper functions for init """
-    def createAddRemoveWatchlistButton(self): 
+    def createAddRemoveFrame(self): 
+        
+        # Initialize frame 
+        self.addremoveframe = tk.Frame(self) 
+        self.addremoveframe.pack(side=tk.TOP)
 
-        # Button for Add / Removing watchlists
-        self.addremovewatchlistbutton = tk.Button(
-            self, text='Add/Remove', 
+        # Add button 
+        addwatchlistbutton = tk.Button(
+            self.addremoveframe, text='Add', 
             highlightbackground='#242629', 
-            pady=10,
-            command = lambda: self.addRemoveWatchlistTable(database),
+            pady=10, command=self.promptUserAndAdd
         )
+        addwatchlistbutton.grid(row=0, column=1)
 
-        # Button grids 
-        self.addremovewatchlistbutton.pack(side=tk.TOP)
-
-    def createWatchlistButtons(self): 
-
+        # Remove button 
+        removewatchlistbutton = tk.Button(
+            self.addremoveframe, text='Remove', 
+            highlightbackground='#242629', 
+            pady=10, 
+            command=self.displayDeleteButtons, 
+        )
+        removewatchlistbutton.grid(row=0, column=0)
+        
+    def createButtonFrames(self): 
+        
         # Loop through each watchlist frame 
         for position in range(len(self.watchlistframes)): 
+            
+            buttonframe = tk.Frame(self)
+            buttonframe.pack(side=tk.TOP)
 
-            # Create button for each watchlist 
-            button = tk.Button(
-                self, text=self.categories[position], 
+            # Button for the watchlist 
+            watchlistname = tk.Button(
+                buttonframe, text=self.categories[position], 
                 highlightbackground='#242629', 
-                pady=5, 
-                command= lambda position=position: self.raiseFrame(self.watchlistframes[position])
+                pady=5, command= lambda position=position: self.raiseFrame(self.watchlistframes[position]), 
             )
+            watchlistname.grid(row=0, column=0)
 
-            # Button grid 
-            button.pack(side=tk.TOP)
+            # Button for removing 
+            removebutton = tk.Button(
+                buttonframe, text='X', 
+                highlightbackground='#242629', 
+                pady=5, command= lambda position=position: self.removeWatchlistCommand(position, self.categories[position])
+            )
+            removebutton.grid_forget()
 
-            # Increments/appends 
-            self.buttonsrow += 1
-            self.watchlistbuttons.append(button)
+            self.buttonframes.append(buttonframe)
 
+    def deleteButtonFrames(self): 
+        for frame in self.buttonframes: 
+            frame.destroy() 
+
+        self.buttonframes = [] 
+    
     """ Button Commands """
     def raiseFrame(self, frame): 
         frame.tkraise()
 
-    def addRemoveWatchlistTable(self, database): 
-        
-        # Create new window
-        self.addremoveframe = tk.Toplevel(self)
-        self.addremoveframe.geometry("220x110")
-        self.addremoveframe.title('Add Watchlist')
-        self.addremoveframe.config(bg='#242629')
+    def promptUserAndAdd(self): 
 
-        # Add Label and text Entry 
-        nameLabel = tk.Label(self.addremoveframe, text='Name', fg='#94a1b2', bg='#242629')
-        nameEntry= tk.Entry(self.addremoveframe, highlightbackground='#242629')
-        nameLabel.place(x=10, y=20)
-        nameEntry.place(x=10, y=40)
-
-        # Add button 
-        addbutton = tk.Button(
-            self.addremoveframe, text="Add",
-            highlightbackground='#242629',
-            command= lambda: self.addTableAndRefresh(nameEntry.get()),
+        self.userinput = tk.Entry(
+            self, highlightbackground='#242629',
+            width=10,
         )
-        # Remove button 
-        removebutton = tk.Button(
-            self.addremoveframe, text="Remove",
-            highlightbackground='#242629',
-            command= lambda: self.removeTableAndRefresh(nameEntry.get()),
-        )
-        addbutton.place(x=90, y=70)
-        removebutton.place(x=10, y=70)
+        self.userinput.pack(side=tk.TOP)
 
-    def addTableAndRefresh(self, name): 
+        self.userinput.bind('<Return>', (lambda event: self.addNewWatchlist(self.userinput.get())))
 
-        if name != '': 
-            # Create table in database 
-            database.createTableWatchlist(name)
-
-            # Update categories 
-            self.categories.append(name)
-
-            # Refresh dbData 
-            dbData = database.loadDatabase()
-
-            # Update watchlist frames
-            newwatchlistframe = WatchlistFrame(self.parent, self.categories, name, dbData.get(name))
-            self.watchlistframes.append(newwatchlistframe)
-
-            # Add new watchlist button
-            categorybutton = tk.Button(
-                self, text=name, 
-                highlightbackground='#242629', 
-                pady=5, 
-                command=lambda newwatchlistframe=newwatchlistframe: self.raiseFrame(newwatchlistframe),
-            )
-            self.watchlistbuttons.append(categorybutton)
-
-            # Add button to end of row 
-            categorybutton.grid(row=self.buttonsrow, column=0)
-            self.buttonsrow += 1
-
-            # Destroy window 
-            self.addremoveframe.destroy()
+    def addNewWatchlist(self, watchlistname): 
         
-    def removeTableAndRefresh(self, name): 
+        # Create Table in database 
+        database.createTableWatchlist(watchlistname)
 
-            # Condition to not destroy current season and finished 
-            if name != 'CurrentSeason' and name != 'Finished': 
-                # Remove table from database 
-                database.destroyTable(name)
+        # Update current categories
+        self.categories.append(watchlistname)
 
-                # Loop through buttons till matching name and destroy 
-                for button in self.watchlistbuttons:
-                    if button['text'] == name: 
-                        button.destroy()
-                        self.watchlistbuttons.remove(button)
-                
-                # Destroy window 
-                self.addremoveframe.destroy()                    
+        # Create New Watchlist frame and append to watchlist frames
+        watchlistframe = WatchlistFrame(self.parent , self.categories, watchlistname, [])
+        self.watchlistframes.append(watchlistframe)
+
+        # Delete Current button frames
+        self.deleteButtonFrames()
+
+        # Create new button frames 
+        self.createButtonFrames()
+
+        # Destroy user input 
+        self.userinput.destroy()
+
+    def removeWatchlistCommand(self, buttonframeposition, name): 
+        
+        # Remove table from database 
+        database.destroyTable(name)
+
+        # Destroy the frame 
+        self.buttonframes[buttonframeposition].destroy() 
+
+        # Delete the frame 
+        del self.buttonframes[buttonframeposition]
+
+    def displayDeleteButtons(self): 
+    
+        for frame in self.buttonframes: 
+
+            if frame.winfo_children()[0]['text'] == 'CurrentSeason' or frame.winfo_children()[0]['text'] == 'Finished': 
+                continue
+
+            frame.winfo_children()[1].grid(row=0, column=1)
+
 
 """ Watchlist Class """
 class WatchlistFrame(tk.Frame):
@@ -742,7 +736,7 @@ class AddAnimeWindow(tk.Frame):
         self.animelist = animeData
         self.animecards = []
         self.start = 0 
-        self.finish = 5
+        self.finish = 4
 
         """ Search area """ 
         self.createSearchArea()
