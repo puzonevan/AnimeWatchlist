@@ -262,7 +262,6 @@ class WatchlistFrame(tk.Frame):
             fg='#fffffe', bg='#16161a',
             pady=4,
         )
-        watchlistlabel.grid(row=0, column=0)
 
         # Button to update watchlist 
         updatewatchlistbutton = tk.Button(
@@ -270,6 +269,9 @@ class WatchlistFrame(tk.Frame):
             highlightbackground='#16161a',
             command=self.updateWatchlistCommand,
         )
+
+        # Grids
+        watchlistlabel.grid(row=0, column=0)
         updatewatchlistbutton.grid(row=0,column=1)
 
     def createAddRemoveAnime(self): 
@@ -291,7 +293,7 @@ class WatchlistFrame(tk.Frame):
             command=self.addAnimeCommand,
         )
 
-        # Button grids 
+        # Grids 
         removeanimebutton.grid(row=0, column=0)
         addanimebutton.grid(row=0, column=1)
 
@@ -323,7 +325,7 @@ class WatchlistFrame(tk.Frame):
             bg='#16161a', pady=6, fg='#94a1b2',
         )
 
-        # Button grids 
+        # Grids 
         self.leftpagebutton.grid(row=0, column=0)
         self.pagelabel.grid(row=0, column=1)
         self.rightpagebutton.grid(row=0, column=2)
@@ -344,7 +346,6 @@ class WatchlistFrame(tk.Frame):
             'A-Z','Genre','Seasons',
         )
         self.filterOptions.config(bg='#16161a')
-        self.filterOptions.grid(row=0, column=0)
 
         # Button to do filter
         filterbutton = tk.Button(
@@ -352,10 +353,12 @@ class WatchlistFrame(tk.Frame):
             highlightbackground='#16161a',
             command=self.filterCommand,
         )
+
+        # Grids
+        self.filterOptions.grid(row=0, column=0)
         filterbutton.grid(row=0, column=1)
 
     def createAnimeCardFrames(self): 
-        
         
         # Create the anime card frames from start to last
         row = 1
@@ -381,6 +384,7 @@ class WatchlistFrame(tk.Frame):
         for animeCardFrame in self.animeCardFrames:
             animeCardFrame.destroy()
 
+        # Empty out anime cards 
         self.animeCardFrames = [] 
     
     def leftButtonCommand(self): 
@@ -438,17 +442,19 @@ class WatchlistFrame(tk.Frame):
 
     def removeAnimeCommand(self):
         
+        # Loop through each frame
         for animecard in self.animeCardFrames: 
-
+            
+            # Destroy content in each anime card 
             animecard.genre.destroy()
             animecard.season.destroy()
 
+            # Display Add to Finished button
             if self.category != 'Finished': 
                 animecard.addtofinished.pack(side=tk.TOP)
 
+            # Display remove button 
             animecard.removebutton.pack(side=tk.TOP)
-            
-
 
     def filterCommand(self): 
 
@@ -540,7 +546,7 @@ class AnimeCardFrame(tk.Frame):
         # Convert AnimeCard pictureurl 
         image = self.animecard.convertPictureUrl()
 
-        # Insert into label 
+        # Insert picture into label 
         self.picture = tk.Label(self, image=image, relief=tk.RAISED, bg='#242629')
         self.picture.photo = image
 
@@ -552,6 +558,7 @@ class AnimeCardFrame(tk.Frame):
         self.genre = tk.Label(self, text=self.animecard.genre, fg='#7f5af0', bg='#242629')
 
     def createAdditionalFunctionality(self):  
+
         # Category checks 
         if self.category == 'CurrentSeason': 
 
@@ -561,7 +568,6 @@ class AnimeCardFrame(tk.Frame):
                 highlightbackground='#242629', 
                 command= self.addAnime,
             )
-
             # CurrentSeason link button 
             self.linkbutton = tk.Button(
                 self, text='Click here for source', 
@@ -592,7 +598,7 @@ class AnimeCardFrame(tk.Frame):
 
     def contentGrid(self): 
         
-
+        # CurrentSeason Cards
         if self.category == 'CurrentSeason': 
 
             self.name.grid(row=1, column=0, columnspan=3)
@@ -601,12 +607,14 @@ class AnimeCardFrame(tk.Frame):
 
             self.addbutton.grid(row=2, column=2)
             self.linkbutton.grid(row=4, column=0, columnspan=3)
+        # Finished Cards
         elif self.category == 'Finished': 
 
             self.name.pack(side=tk.TOP)
             self.picture.pack(side=tk.TOP)
 
             self.removebutton.pack_forget()
+        # Normal Watchlist Cards
         else: 
 
             self.name.pack(side=tk.TOP)
@@ -668,7 +676,6 @@ class AnimeCardFrame(tk.Frame):
             # Destroy everything inside 
             self.deleteContent()
             self.removebutton.destroy()
-
         else: 
 
             database.removeFromWatchlist(self.category, self.animecard.name)
@@ -708,6 +715,7 @@ class AnimeCardFrame(tk.Frame):
         addedlabel.place(relx=.5, rely=.5, anchor="center")
 
     def deleteContent(self): 
+
         self.picture.destroy()
         self.name.destroy()
         self.season.destroy()
@@ -766,7 +774,7 @@ class AddAnimeWindow(tk.Frame):
             command=lambda: self.searchCommand(animeentry.get()),
         )
 
-        # Content grids 
+        # Grids 
         animeentry.grid(row=0,column=0)
         searchbutton.grid(row=0,column=1)
 
@@ -789,7 +797,7 @@ class AddAnimeWindow(tk.Frame):
             command=self.rightButtonCommand,
         )
 
-        # Button grids 
+        # Grids 
         leftbutton.grid(row=0, column=0)
         rightbutton.grid(row=0, column=1)
 
