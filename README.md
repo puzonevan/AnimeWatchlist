@@ -3,7 +3,7 @@ Record and update an Anime Watchlist, view anime of the current season, and reco
 
 ## Overview 
 User interacts with UI to keep track of the Anime shows and movies he/she plans to watch and has already completed. The pictures directory 
-displays how the UI looks when adding anime, adding watchlists, etc. ** This application works best on mac and not Windows ** 
+displays how the UI looks when adding anime, adding watchlists, etc. **This application works best on mac and not Windows** 
 
 ## Features 
   - Adding/Removing Anime 
@@ -18,4 +18,5 @@ displays how the UI looks when adding anime, adding watchlists, etc. ** This app
   - Tkinter, Selenium
   - Unittest
   
-  
+### Mentions
+  - [Anime JSON Data] (https://github.com/manami-project/anime-offline-database)
