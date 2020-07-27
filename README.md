@@ -19,4 +19,4 @@ displays how the UI looks when adding anime, adding watchlists, etc. **This appl
   - Unittest
   
 ### Mentions
-  - [Anime JSON Data] (https://github.com/manami-project/anime-offline-database)
+[Anime JSON Data] (https://github.com/manami-project/anime-offline-database).
